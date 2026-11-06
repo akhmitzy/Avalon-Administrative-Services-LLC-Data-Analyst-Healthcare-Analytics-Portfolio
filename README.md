@@ -5,7 +5,7 @@ quality gate and Finance reconciliation, an evidence-based policy-adherence engi
 performance-guarantee measurement, a lab spend forecast, a prospect pricing model in Excel, and a governed
 semantic model for natural-language querying.
 
-Built by **Matias** (matias00tut@gmail.com) as a portfolio for a *Data Analyst, Health Analytics* role.
+Built by **Ram Akhmitzyanovatias** (arramzis@gmail.com) as a portfolio for a *Data Analyst, Health Analytics* role.
 
 > **All data is synthetic.** `src/generate_data.py` creates six fictional health plans (Commercial, Medicare
 > Advantage, Medicaid), ~54,000 members, ~597,000 lab claim lines (Jan 2024 – Jun 2026, paid through
