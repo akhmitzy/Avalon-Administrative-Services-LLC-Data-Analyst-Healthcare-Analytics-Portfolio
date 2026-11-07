@@ -1,0 +1,179 @@
+# Semantic model for natural-language querying (Snowflake Cortex Analyst format).
+# Lets business users ask "what was Bayview's lab PMPM last quarter?" and get governed SQL.
+# Metric definitions here are the SAME definitions used in the dashboards, so an AI answer
+# and a Tableau number cannot drift apart. Every verified query is executed and checked
+# against an independent calculation in CI (src/ai/verify_semantic_queries.py).
+name: lab_analytics
+description: >
+  Outpatient lab utilization, spend and policy adherence for health-plan clients of a
+  diagnostic benefit management program. Spend is allowed dollars. PMPM = per member per month.
+
+tables:
+  - name: client_month_metrics
+    description: Monthly lab metrics by client and test category, with member months for PMPM.
+    base_table:
+      database: LAB_ANALYTICS
+      schema: MARTS
+      table: CLIENT_MONTH_METRICS
+    dimensions:
+      - name: client_id
+        expr: client_id
+        data_type: VARCHAR
+        description: Client (health plan) identifier.
+        sample_values: [C01, C02, C03, C04, C05, C06]
+      - name: client_name
+        expr: client_name
+        data_type: VARCHAR
+        description: Health plan name.
+        synonyms: [plan, health plan, client, customer]
+        sample_values: [Suncoast Health Partners, Bayview Medicare Advantage, Heartland Community Care]
+      - name: line_of_business
+        expr: line_of_business
+        data_type: VARCHAR
+        synonyms: [LOB, product line, segment]
+        sample_values: [Commercial, Medicare Advantage, Medicaid]
+      - name: test_category
+        expr: test_category
+        data_type: VARCHAR
+        synonyms: [test type, lab category]
+        sample_values: [Routine, Genetic & Molecular, Toxicology, Infectious Disease, Anatomic Pathology]
+      - name: program_period
+        expr: program_period
+        data_type: VARCHAR
+        description: Whether the month is before or after the client's program go-live.
+        sample_values: [Pre go-live, Post go-live, Not live]
+    time_dimensions:
+      - name: service_month
+        expr: service_month
+        data_type: DATE
+        description: First day of the month the test was performed (incurred basis).
+        synonyms: [month, date of service, incurred month]
+    facts:
+      - name: allowed
+        expr: allowed
+        data_type: NUMBER
+        description: Allowed dollars for lab tests.
+        synonyms: [spend, cost, lab spend, allowed amount]
+      - name: tests
+        expr: tests
+        data_type: NUMBER
+        synonyms: [test count, volume, utilization]
+      - name: avoidable_allowed
+        expr: avoidable_allowed
+        data_type: NUMBER
+        description: Allowed dollars on tests that did not meet an evidence-based lab policy.
+        synonyms: [waste, avoidable spend, inappropriate spend, savings opportunity]
+      - name: oon_allowed
+        expr: oon_allowed
+        data_type: NUMBER
+        synonyms: [out of network spend, OON spend]
+      - name: member_months
+        expr: member_months
+        data_type: NUMBER
+        description: >
+          Member months for the client and month. Repeated on every test_category row,
+          so it must be taken once per client-month (MAX), never summed across categories.
+    metrics:
+      - name: total_allowed
+        expr: SUM(allowed)
+      - name: avoidable_share
+        description: Avoidable dollars as a share of lab spend.
+        expr: SUM(avoidable_allowed) / NULLIF(SUM(allowed), 0)
+      - name: oon_share
+        description: Out-of-network share of lab spend.
+        expr: SUM(oon_allowed) / NULLIF(SUM(allowed), 0)
+
+  - name: claim_policy_flags
+    description: One row per payable lab claim with its policy finding and avoidable dollars.
+    base_table:
+      database: LAB_ANALYTICS
+      schema: MARTS
+      table: CLAIM_POLICY_FLAGS
+    primary_key:
+      columns: [claim_id]
+    dimensions:
+      - name: client_id
+        expr: client_id
+        data_type: VARCHAR
+      - name: cpt_code
+        expr: cpt_code
+        data_type: VARCHAR
+        synonyms: [procedure code, test code, CPT, HCPCS]
+      - name: policy_id
+        expr: policy_id
+        data_type: VARCHAR
+        description: >
+          Policy finding. P01 vitamin D screening, P02 HbA1c frequency, P03 same-day duplicate,
+          P04 definitive drug test without presumptive, P05 large respiratory panel,
+          P06 genetic test without indication, P07 out-of-network price. NULL = adherent.
+        synonyms: [policy, finding, rule]
+      - name: lab_id
+        expr: lab_id
+        data_type: VARCHAR
+        synonyms: [lab, rendering lab, performing lab]
+      - name: in_network
+        expr: in_network
+        data_type: BOOLEAN
+    time_dimensions:
+      - name: service_date
+        expr: service_date
+        data_type: DATE
+    facts:
+      - name: net_allowed
+        expr: net_allowed
+        data_type: NUMBER
+      - name: avoidable_allowed
+        expr: avoidable_allowed
+        data_type: NUMBER
+
+relationships:
+  - name: flags_to_client_month
+    left_table: claim_policy_flags
+    right_table: client_month_metrics
+    relationship_columns:
+      - left_column: client_id
+        right_column: client_id
+    join_type: left_outer
+    relationship_type: many_to_one
+
+verified_queries:
+  - name: pmpm_by_client_2025
+    question: What was lab allowed PMPM by client in calendar 2025?
+    use_as_onboarding_question: true
+    verified_by: Health Analytics
+    sql: |
+      WITH cm AS (
+        SELECT client_name, service_month, SUM(allowed) AS allowed, MAX(member_months) AS mm
+        FROM __client_month_metrics
+        WHERE service_month BETWEEN '2025-01-01' AND '2025-12-01'
+        GROUP BY client_name, service_month
+      )
+      SELECT client_name, ROUND(SUM(allowed) / SUM(mm), 2) AS allowed_pmpm
+      FROM cm GROUP BY client_name ORDER BY allowed_pmpm DESC
+
+  - name: avoidable_by_policy_prospect
+    question: How much avoidable spend did Lakeshore Senior Plan have by policy in the last 12 months?
+    verified_by: Health Analytics
+    sql: |
+      SELECT policy_id, ROUND(SUM(avoidable_allowed), 0) AS avoidable_allowed, COUNT(*) AS claims
+      FROM __claim_policy_flags
+      WHERE client_id = 'C05' AND policy_id IS NOT NULL
+        AND service_date BETWEEN '2025-06-01' AND '2026-05-31'
+      GROUP BY policy_id ORDER BY avoidable_allowed DESC
+
+  - name: oon_share_pre_post
+    question: Did out-of-network share go down after go-live for each live client?
+    verified_by: Health Analytics
+    sql: |
+      SELECT client_name, program_period, ROUND(SUM(oon_allowed) / NULLIF(SUM(allowed), 0), 4) AS oon_share
+      FROM __client_month_metrics
+      WHERE program_period IN ('Pre go-live', 'Post go-live')
+      GROUP BY client_name, program_period ORDER BY client_name, program_period DESC
+
+  - name: top_labs_avoidable
+    question: Which labs generate the most avoidable spend?
+    verified_by: Health Analytics
+    sql: |
+      SELECT lab_id, ROUND(SUM(avoidable_allowed), 0) AS avoidable_allowed
+      FROM __claim_policy_flags
+      GROUP BY lab_id ORDER BY avoidable_allowed DESC LIMIT 5
