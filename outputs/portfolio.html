@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ram Akhmitzyanov · Healthcare Data Analyst Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* Plan: clinical-lab report. Cool slate neutrals, one deep teal accent, IBM Plex family.
+   Layout: single reading column (~1120px) of numbered case studies, each opening with the
+   business question, then the result, then the method and code. Dashboard sits up top. */
+:root {
+  --bg: #f4f7f8;
+  --surface: #ffffff;
+  --surface-2: #eef2f4;
+  --ink: #0f1d26;
+  --muted: #4f5f6a;
+  --faint: #7a8891;
+  --line: #d8e0e4;
+  --accent: #0b6676;
+  --accent-soft: #dcecef;
+  --series-1: #2a78d6;
+  --series-1-soft: rgba(42,120,214,.14);
+  --series-ref: #8a959c;
+  --good: #0ca30c; --warn: #fab219; --serious: #ec835a; --critical: #d03b3b;
+  --code-bg: #0f1d26; --code-ink: #dbe7ec; --code-key: #7fd1de; --code-com: #8ea2ad;
+  --display: "IBM Plex Sans Condensed", "Arial Narrow", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1417; --surface: #151d21; --surface-2: #1b252a; --ink: #e5ecef; --muted: #a3b1b9;
+    --faint: #7d8c95; --line: #2a363c; --accent: #5cb8c7; --accent-soft: #173138;
+    --series-1: #3987e5; --series-1-soft: rgba(57,135,229,.20); --series-ref: #8c979e;
+    --code-bg: #0a0f12; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1417; --surface: #151d21; --surface-2: #1b252a; --ink: #e5ecef; --muted: #a3b1b9;
+  --faint: #7d8c95; --line: #2a363c; --accent: #5cb8c7; --accent-soft: #173138;
+  --series-1: #3987e5; --series-1-soft: rgba(57,135,229,.20); --series-ref: #8c979e;
+  --code-bg: #0a0f12; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 var(--body); }
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 480px) { .wrap { padding: 0 16px; } }
+h1, h2, h3 { font-family: var(--display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.1rem, 4.6vw, 3.1rem); font-weight: 700; letter-spacing: -.01em; }
+h2 { font-size: 1.9rem; font-weight: 600; }
+h3 { font-size: 1.2rem; font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+.num { font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.small { font-size: .875rem; }
+
+/* header */
+header.top { border-bottom: 1px solid var(--line); background: var(--surface); }
+.top-inner { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; padding: 48px 0 40px; align-items: end; }
+@media (max-width: 860px) { .top-inner { grid-template-columns: 1fr; gap: 28px; } }
+.role { font-family: var(--mono); font-size: .82rem; color: var(--accent); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 14px; }
+.lede { font-size: 1.15rem; color: var(--muted); margin-top: 16px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.chip { font-size: .8rem; padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface-2); color: var(--ink); }
+.contact { border-left: 3px solid var(--accent); padding-left: 18px; display: grid; gap: 6px; font-size: .95rem; }
+.contact b { font-family: var(--display); font-size: 1.05rem; }
+.note-synthetic { margin-top: 10px; font-size: .82rem; color: var(--faint); }
+nav.toc { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+nav.toc .wrap { display: flex; gap: 22px; overflow-x: auto; padding-top: 10px; padding-bottom: 10px; }
+nav.toc a { color: var(--muted); text-decoration: none; font-size: .88rem; white-space: nowrap; }
+nav.toc a:hover { color: var(--ink); }
+nav.toc a span { font-family: var(--mono); color: var(--faint); margin-right: 4px; }
+
+/* KPI band */
+.kpis { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin: 36px 0 8px; }
+@media (max-width: 900px) { .kpis { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 480px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+.kpi { background: var(--surface); padding: 16px 18px; }
+.kpi .v { font-family: var(--display); font-size: 1.65rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.kpi .l { font-size: .8rem; color: var(--muted); line-height: 1.35; }
+
+section.block { padding: 64px 0 8px; }
+.sec-head { display: grid; grid-template-columns: 64px 1fr; gap: 0 14px; margin-bottom: 26px; }
+.sec-no { font-family: var(--mono); color: var(--accent); font-size: .95rem; padding-top: 9px; }
+.sec-head p { grid-column: 2; margin-top: 10px; color: var(--muted); font-size: 1.05rem; }
+@media (max-width: 600px) { .sec-head { grid-template-columns: 1fr; } .sec-head p { grid-column: 1; } }
+
+.qa { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+@media (max-width: 860px) { .qa { grid-template-columns: 1fr; } }
+.qa > div { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+.qa h4 { margin: 0 0 6px; font-family: var(--mono); font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); font-weight: 500; }
+.qa p { font-size: .95rem; }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3-2 { display: grid; grid-template-columns: 3fr 2fr; gap: 16px; }
+@media (max-width: 860px) { .grid2, .grid-3-2 { grid-template-columns: 1fr; } }
+.grid2 > *, .grid-3-2 > *, .qa > *, .top-inner > *, .steps > * { min-width: 0; }
+.panel h3 { margin-bottom: 4px; }
+.panel .sub { font-size: .85rem; color: var(--muted); margin-bottom: 12px; }
+.chart-box { position: relative; height: 290px; }
+.chart-box.tall { height: 340px; }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: .82rem; color: var(--muted); margin: 4px 0 10px; }
+.legend i { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--series-1); vertical-align: middle; margin-right: 6px; }
+.legend i.ref { border-top: 2px dashed var(--series-ref); }
+.legend i.sq { width: 12px; height: 12px; border: 0; border-radius: 3px; background: var(--series-1); }
+.legend i.sq.ref { background: var(--series-ref); }
+.legend i.band { width: 14px; height: 10px; border: 0; background: var(--series-1-soft); }
+
+/* dashboard */
+.dash-controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.seg { border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 500 .88rem var(--body); padding: 7px 12px; border-radius: 8px; cursor: pointer; }
+.seg:hover { border-color: var(--accent); }
+.seg[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.seg small { display: block; font-weight: 400; font-size: .72rem; opacity: .8; }
+.dash-kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 16px; }
+@media (max-width: 860px) { .dash-kpis { grid-template-columns: repeat(2, 1fr); } }
+.dk { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.dk .v { font-family: var(--display); font-size: 1.45rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.dk .l { font-size: .78rem; color: var(--muted); }
+.callout { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: .95rem; margin-top: 16px; }
+
+/* status pills */
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; font-weight: 600; padding: 2px 9px 2px 7px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); white-space: nowrap; }
+.pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--faint); }
+.pill.good::before { background: var(--good); }
+.pill.warn::before { background: var(--warn); }
+.pill.serious::before { background: var(--serious); }
+.pill.critical::before { background: var(--critical); }
+
+/* tables */
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; font-size: .78rem; color: var(--muted); background: var(--surface-2); white-space: nowrap; }
+td.r, th.r { text-align: right; font-variant-numeric: tabular-nums; }
+tr:last-child td { border-bottom: 0; }
+td code, p code, li code { font-family: var(--mono); font-size: .84em; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+
+/* code */
+details.code { margin-top: 16px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+details.code summary { cursor: pointer; padding: 11px 16px; font-size: .9rem; font-weight: 500; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+details.code summary::-webkit-details-marker { display: none; }
+details.code summary::after { content: "Show"; font-family: var(--mono); font-size: .78rem; color: var(--accent); }
+details.code[open] summary::after { content: "Hide"; }
+details.code summary span { font-family: var(--mono); font-size: .8rem; color: var(--faint); min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 600px) { details.code summary span { display: none; } }
+pre { margin: 0; background: var(--code-bg); color: var(--code-ink); padding: 16px 18px; overflow-x: auto; font: .8rem/1.55 var(--mono); border-radius: 0 0 10px 10px; }
+pre .k { color: var(--code-key); }
+pre .c { color: var(--code-com); font-style: italic; }
+.code-open pre { border-radius: 10px; }
+
+ul.tight { margin: 10px 0 0; padding-left: 20px; }
+ul.tight li { margin: 4px 0; max-width: 70ch; }
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+@media (max-width: 860px) { .steps { grid-template-columns: 1fr 1fr; } }
+.steps > div { padding: 14px 16px; border-right: 1px solid var(--line); }
+.steps > div:last-child { border-right: 0; }
+.steps b { font-family: var(--mono); font-size: .75rem; color: var(--accent); display: block; letter-spacing: .05em; }
+.steps span { font-size: .88rem; }
+.steps em { display: block; font-style: normal; font-size: .78rem; color: var(--muted); margin-top: 4px; }
+
+footer { margin-top: 72px; border-top: 1px solid var(--line); background: var(--surface); padding: 28px 0 40px; font-size: .9rem; color: var(--muted); }
+.mt16 { margin-top: 16px; } .mt24 { margin-top: 24px; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-inner">
+    <div>
+      <div class="role">Portfolio · Data Analyst, Health Analytics</div>
+      <h1>Ram Akhmitzyanov</h1>
+      <p class="lede">I turn lab claims into answers on spend, policy adherence and client value: clean pipelines, models Finance and Actuarial can audit, and dashboards a client can act on.</p>
+      <div class="chips">
+        <span class="chip">SQL (Snowflake dialect)</span><span class="chip">Snowflake tasks &amp; stored procedures</span>
+        <span class="chip">Python · pandas · DuckDB</span><span class="chip">ETL &amp; data validation</span>
+        <span class="chip">Finance reconciliation</span><span class="chip">IBNR completion</span>
+        <span class="chip">Program impact (DiD)</span><span class="chip">Forecasting</span><span class="chip">Excel pricing models</span>
+        <span class="chip">Tableau-ready marts</span><span class="chip">Cortex Analyst semantic model</span><span class="chip">GitHub Actions CI</span>
+      </div>
+    </div>
+    <div class="contact">
+      <b>Contact</b>
+      <span>arramzis@gmail.com</span>
+      <span class="muted small">Remote · available for quarterly travel to Tampa, FL</span>
+      <span class="muted small">Repository: <code>diagnostic-insights-analytics</code></span>
+      <p class="note-synthetic">All data here is synthetic, generated to behave like a diagnostic benefit management book of business: six health plans, a program that goes live at different dates, and deliberate data defects. Every number on this page comes from running the code in the repository.</p>
+    </div>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Sections">
+  <div class="wrap">
+    <a href="#dashboard"><span>00</span>Client dashboard</a>
+    <a href="#pipeline"><span>01</span>Pipeline &amp; data quality</a>
+    <a href="#policy"><span>02</span>Policy adherence</a>
+    <a href="#impact"><span>03</span>Program impact &amp; ROI</a>
+    <a href="#forecast"><span>04</span>Forecast</a>
+    <a href="#pricing"><span>05</span>Prospect pricing</a>
+    <a href="#ai"><span>06</span>AI-enabled analytics</a>
+    <a href="#fit"><span>07</span>Role fit</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <div class="kpis" id="kpis"></div>
+  <p class="muted small">Book of business: 6 plans (Commercial, Medicare Advantage, Medicaid), Jan 2024 – Jun 2026 service dates, claims paid through 30 Jun 2026.</p>
+
+  <!-- 00 DASHBOARD -->
+  <section class="block" id="dashboard">
+    <div class="sec-head">
+      <div class="sec-no">00</div>
+      <h2>Client performance dashboard</h2>
+      <p>The view an account team opens before a quarterly business review. Pick a plan to see its lab spend against the expected trend, where its avoidable spend sits, and whether its performance guarantee is on track. Built from the same marts that feed the Tableau extracts.</p>
+    </div>
+    <div class="dash-controls" id="clientButtons" role="group" aria-label="Choose a health plan"></div>
+    <div class="dash-kpis" id="dashKpis"></div>
+    <div class="grid-3-2">
+      <div class="panel">
+        <h3 id="pmpmTitle">Lab allowed PMPM</h3>
+        <div class="sub" id="pmpmSub">Actual vs. expected without the program (completed for claims not yet paid)</div>
+        <div class="legend"><span><i></i>Actual PMPM</span><span><i class="ref"></i>Expected without program</span></div>
+        <div class="chart-box"><canvas id="pmpmChart" aria-label="Monthly PMPM chart"></canvas></div>
+      </div>
+      <div class="panel">
+        <h3>Avoidable spend by policy</h3>
+        <div class="sub" id="polSub">$ PMPM, before vs. after go-live</div>
+        <div class="legend"><span><i class="sq ref"></i>Before go-live</span><span><i class="sq"></i>After go-live</span></div>
+        <div class="chart-box"><canvas id="polChart" aria-label="Avoidable PMPM by policy chart"></canvas></div>
+        <p class="small muted" id="polFoot"></p>
+      </div>
+    </div>
+    <div class="callout" id="dashNote"></div>
+  </section>
+
+  <!-- 01 PIPELINE -->
+  <section class="block" id="pipeline">
+    <div class="sec-head">
+      <div class="sec-no">01</div>
+      <h2>An ELT pipeline that refuses to publish bad numbers</h2>
+      <p>Raw claim files land; staging standardizes and tags every defect; a quality gate decides whether marts refresh; Finance totals are reconciled every run.</p>
+    </div>
+    <div class="qa">
+      <div><h4>Business question</h4><p>Can Finance, Actuarial and client teams trust that every dashboard number ties to what was actually paid?</p></div>
+      <div><h4>What I built</h4><p>SQL staging &amp; marts (Snowflake-compatible, CI-tested on DuckDB), 9 automated checks with BLOCKER/WARN severity, a GL reconciliation with batch-level drill-down, a Snowflake TASK + ALERT, and a GitHub Actions workflow.</p></div>
+      <div><h4>Result</h4><p id="pipeResult"></p></div>
+    </div>
+    <div class="steps">
+      <div><b>RAW</b><span>Parquet claims, eligibility, GL, reference</span><em>COPY INTO from S3 stage</em></div>
+      <div><b>STAGING</b><span>Dedupe, type, tag defects, net reversals</span><em>stg_claims_lab → stg_claims_net</em></div>
+      <div><b>QA GATE</b><span>Checks + GL reconciliation</span><em>BLOCKER stops the run</em></div>
+      <div><b>MARTS</b><span>Policy flags, client-month metrics, lag triangle</span><em>Tableau extracts at 07:00</em></div>
+    </div>
+    <div class="grid2 mt16">
+      <div>
+        <h3 class="mt16" style="margin-bottom:10px">Automated checks, latest run</h3>
+        <div class="tbl-wrap"><table id="dqTable"></table></div>
+      </div>
+      <div>
+        <h3 class="mt16" style="margin-bottom:10px">Claims vs. Finance GL</h3>
+        <div class="tbl-wrap"><table id="reconTable"></table></div>
+        <p class="small muted mt16" id="reconNote"></p>
+        <div class="callout"><b>A bug the tests caught.</b> The first version netted reversals using only the valid lines of a claim. When a reversal line failed a check but its original passed, the service was double counted. An integration test (<code>test_no_quarantined_lines_reach_marts</code>) found 22 such claims; the fix quarantines the whole claim.</div>
+      </div>
+    </div>
+    <details class="code"><summary>Reconciliation SQL <span>sql/quality/02_reconcile_finance_gl.sql</span></summary><pre><span class="c">-- =====================================================================================</span>
+<span class="c">-- qa.recon_claims_vs_gl</span>
+<span class="c">-- Reconciles claims-extract paid dollars to the Finance general ledger (paid basis),</span>
+<span class="c">-- by client and paid month. Material variances usually mean a missing or late file,</span>
+<span class="c">-- not a math problem, so the output points at the batch-level detail to chase.</span>
+<span class="c">-- Tolerance: |variance| &lt;= 0.50% of GL OR &lt;= $500.</span>
+<span class="c">-- =====================================================================================</span>
+<span class="k">CREATE OR REPLACE</span> <span class="k">TABLE</span> qa.recon_claims_vs_gl <span class="k">AS</span>
+<span class="k">WITH</span> claims <span class="k">AS</span> (
+    <span class="k">SELECT</span> client_id, paid_month, <span class="k">SUM</span>(paid_amount) <span class="k">AS</span> claims_paid,
+           <span class="k">COUNT</span>(<span class="k">DISTINCT</span> source_batch_id) <span class="k">AS</span> batches_received
+    <span class="k">FROM</span> staging.stg_claims_lab            <span class="c">-- all deduped lines: GL books everything paid</span>
+    <span class="k">GROUP BY</span> client_id, paid_month
+),
+gl <span class="k">AS</span> (
+    <span class="k">SELECT</span> client_id, CAST(paid_month <span class="k">AS</span> DATE) <span class="k">AS</span> paid_month, gl_paid_amount
+    <span class="k">FROM</span> raw.finance_gl_lab_paid
+)
+<span class="k">SELECT</span>
+    <span class="k">COALESCE</span>(g.client_id, c.client_id)                       <span class="k">AS</span> client_id,
+    <span class="k">COALESCE</span>(g.paid_month, c.paid_month)                     <span class="k">AS</span> paid_month,
+    <span class="k">ROUND</span>(<span class="k">COALESCE</span>(g.gl_paid_amount, 0), 2)                  <span class="k">AS</span> gl_paid,
+    <span class="k">ROUND</span>(<span class="k">COALESCE</span>(c.claims_paid, 0), 2)                     <span class="k">AS</span> claims_paid,
+    <span class="k">ROUND</span>(<span class="k">COALESCE</span>(c.claims_paid, 0) - <span class="k">COALESCE</span>(g.gl_paid_amount, 0), 2) <span class="k">AS</span> variance,
+    <span class="k">ROUND</span>((<span class="k">COALESCE</span>(c.claims_paid, 0) - <span class="k">COALESCE</span>(g.gl_paid_amount, 0))
+          / NULLIF(g.gl_paid_amount, 0), 5)                  <span class="k">AS</span> variance_pct,
+    c.batches_received,
+    <span class="k">CASE</span>
+        <span class="k">WHEN</span> ABS(<span class="k">COALESCE</span>(c.claims_paid, 0) - <span class="k">COALESCE</span>(g.gl_paid_amount, 0)) &lt;= 500 <span class="k">THEN</span> 'RECONCILED'
+        <span class="k">WHEN</span> ABS(<span class="k">COALESCE</span>(c.claims_paid, 0) - <span class="k">COALESCE</span>(g.gl_paid_amount, 0))
+             &lt;= 0.005 * ABS(g.gl_paid_amount) <span class="k">THEN</span> 'RECONCILED'
+        <span class="k">ELSE</span> 'INVESTIGATE'
+    <span class="k">END</span>                                                      <span class="k">AS</span> recon_status
+<span class="k">FROM</span> gl g
+<span class="k">FULL</span> <span class="k">OUTER</span> <span class="k">JOIN</span> claims c
+  <span class="k">ON</span> c.client_id = g.client_id <span class="k">AND</span> c.paid_month = g.paid_month;</pre></details>
+    <details class="code"><summary>Snowflake stored procedure with quality gate <span>snowflake/02_sp_refresh_lab_marts.sql</span></summary><pre><span class="k">CREATE OR REPLACE</span> <span class="k">PROCEDURE</span> LAB_ANALYTICS.QA.SP_REFRESH_LAB_MARTS()
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE <span class="k">AS</span> OWNER
+<span class="k">AS</span>
+$$
+<span class="k">DECLARE</span>
+    blockers     NUMBER DEFAULT 0;
+    recon_issues NUMBER DEFAULT 0;
+<span class="k">BEGIN</span>
+    <span class="c">-- 1. staging (same SQL as sql/staging/*.sql)</span>
+    <span class="k">EXECUTE IMMEDIATE</span> <span class="k">FROM</span> '@LAB_ANALYTICS.QA.DEPLOY_STAGE/sql/staging/01_stg_claims_lab.sql';
+    <span class="k">EXECUTE IMMEDIATE</span> <span class="k">FROM</span> '@LAB_ANALYTICS.QA.DEPLOY_STAGE/sql/staging/02_stg_member_months.sql';
+    <span class="k">EXECUTE IMMEDIATE</span> <span class="k">FROM</span> '@LAB_ANALYTICS.QA.DEPLOY_STAGE/sql/staging/03_stg_claims_net.sql';
+
+    <span class="c">-- 2. quality checks + finance reconciliation</span>
+    <span class="k">EXECUTE IMMEDIATE</span> <span class="k">FROM</span> '@LAB_ANALYTICS.QA.DEPLOY_STAGE/sql/quality/01_dq_checks.sql';
+    <span class="k">EXECUTE IMMEDIATE</span> <span class="k">FROM</span> '@LAB_ANALYTICS.QA.DEPLOY_STAGE/sql/quality/02_reconcile_finance_gl.sql';
+
+    <span class="k">SELECT</span> <span class="k">COUNT</span>(*) INTO :blockers
+      <span class="k">FROM</span> LAB_ANALYTICS.QA.DQ_CHECK_RESULTS <span class="k">WHERE</span> SEVERITY = 'BLOCKER' <span class="k">AND</span> STATUS = 'FAIL';
+    <span class="k">SELECT</span> <span class="k">COUNT</span>(*) INTO :recon_issues
+      <span class="k">FROM</span> LAB_ANALYTICS.QA.RECON_CLAIMS_VS_GL <span class="k">WHERE</span> RECON_STATUS = 'INVESTIGATE';
+
+    <span class="k">IF</span> (blockers &gt; 0) <span class="k">THEN</span>
+        <span class="k">INSERT INTO</span> LAB_ANALYTICS.QA.PIPELINE_RUNS (STATUS, BLOCKERS, RECON_ISSUES, MESSAGE)
+        <span class="k">VALUES</span> ('FAILED_QUALITY_GATE', :blockers, :recon_issues, 'Marts not refreshed');
+        <span class="k">RETURN</span> 'FAILED: ' || blockers || ' blocking checks';
+    <span class="k">END</span> <span class="k">IF</span>;
+
+    <span class="c">-- 3. marts (only reached when the gate passes)</span>
+    <span class="k">EXECUTE IMMEDIATE</span> <span class="k">FROM</span> '@LAB_ANALYTICS.QA.DEPLOY_STAGE/sql/marts/01_policy_flags.sql';
+    <span class="k">EXECUTE IMMEDIATE</span> <span class="k">FROM</span> '@LAB_ANALYTICS.QA.DEPLOY_STAGE/sql/marts/02_client_month_metrics.sql';
+    <span class="k">EXECUTE IMMEDIATE</span> <span class="k">FROM</span> '@LAB_ANALYTICS.QA.DEPLOY_STAGE/sql/marts/03_lag_triangle.sql';
+
+    <span class="k">INSERT INTO</span> LAB_ANALYTICS.QA.PIPELINE_RUNS (STATUS, BLOCKERS, RECON_ISSUES, MESSAGE)
+    <span class="k">VALUES</span> ('SUCCESS', 0, :recon_issues,
+            IFF(:recon_issues &gt; 0, 'Published; reconciliation exceptions sent to Finance', 'Published'));
+    <span class="k">RETURN</span> 'SUCCESS (recon exceptions: ' || recon_issues || ')';
+EXCEPTION
+    <span class="k">WHEN</span> OTHER <span class="k">THEN</span>
+        <span class="k">INSERT INTO</span> LAB_ANALYTICS.QA.PIPELINE_RUNS (STATUS, MESSAGE) <span class="k">VALUES</span> ('ERROR', :SQLERRM);
+        RAISE;
+<span class="k">END</span>;
+$$;</pre></details>
+  </section>
+
+  <!-- 02 POLICY -->
+  <section class="block" id="policy">
+    <div class="sec-head">
+      <div class="sec-no">02</div>
+      <h2>Policy-adherence engine: where the avoidable dollars are</h2>
+      <p>Seven evidence-based lab policies written as SQL rules, run against every payable claim. Each claim gets at most one finding and an avoidable-cost estimate that is defensible line by line.</p>
+    </div>
+    <div class="qa">
+      <div><h4>Business question</h4><p>How much of a plan's lab spend is avoidable, and which policies should we lead with?</p></div>
+      <div><h4>Approach</h4><p>Window functions and self-joins for frequency limits (HbA1c), look-back windows (presumptive before definitive drug testing), indication lookups for genetic tests, and an in-network median benchmark for out-of-network price.</p></div>
+      <div><h4>Result</h4><p id="polResult"></p></div>
+    </div>
+    <div class="grid-3-2">
+      <div class="panel">
+        <h3>Avoidable allowed $ by policy, all plans, Jan 2024 – Jun 2026</h3>
+        <div class="sub">Out-of-network price and genetic testing without indication lead; frequency rules are many claims, few dollars</div>
+        <div class="chart-box"><canvas id="polTotalChart" aria-label="Avoidable dollars by policy"></canvas></div>
+      </div>
+      <div class="tbl-wrap"><table id="polTable"></table></div>
+    </div>
+    <ul class="tight small muted mt16">
+      <li>Avoidable cost is the full allowed amount for tests that should not have been done, but only the price gap where a cheaper test answers the same question (definitive drug panel 22+ classes vs. 1–7; full respiratory panel vs. a targeted SARS-CoV-2/flu/RSV panel).</li>
+      <li>The HbA1c rule is evaluated from Jan 2025 so every test has a full 12-month look-back; earlier tests would be under-counted and make the program look worse than it is.</li>
+      <li>Seven unit tests on hand-built claims pin each rule's edge cases (e.g. a presumptive screen 19 days before passes; 30+ days fails).</li>
+    </ul>
+    <details class="code"><summary>Policy rules (excerpt) <span>sql/marts/01_policy_flags.sql</span></summary><pre><span class="c">-- P02: rolling 12-month count of HbA1c tests at or before each test</span>
+a1c <span class="k">AS</span> (
+    <span class="k">SELECT</span> a.claim_id,
+           <span class="k">COUNT</span>(*) <span class="k">AS</span> a1c_tests_rolling_12m
+    <span class="k">FROM</span> c a
+    <span class="k">JOIN</span> c b
+      <span class="k">ON</span> b.member_id = a.member_id
+     <span class="k">AND</span> b.cpt_code = '83036'
+     <span class="k">AND</span> b.service_date <span class="k">BETWEEN</span> a.service_date - <span class="k">INTERVAL</span> '364 days' <span class="k">AND</span> a.service_date
+     <span class="k">AND</span> (b.service_date &lt; a.service_date <span class="k">OR</span> b.claim_id &lt;= a.claim_id)
+    <span class="k">WHERE</span> a.cpt_code = '83036'
+    <span class="k">GROUP BY</span> a.claim_id
+),
+<span class="c">-- P03: same member, same routine test, same day, more than one claim</span>
+same_day <span class="k">AS</span> (
+    <span class="k">SELECT</span> claim_id,
+           ROW_NUMBER() OVER (PARTITION BY member_id, cpt_code, service_date
+                              <span class="k">ORDER BY</span> first_paid_date, claim_id) <span class="k">AS</span> same_day_seq
+    <span class="k">FROM</span> c <span class="k">WHERE</span> test_category = 'Routine'
+),
+<span class="c">-- P04: did a presumptive screen (80307) occur within 30 days before / same day?</span>
+def_drug <span class="k">AS</span> (
+    <span class="k">SELECT</span> d.claim_id,
+           <span class="k">MAX</span>(<span class="k">CASE</span> <span class="k">WHEN</span> p.claim_id <span class="k">IS NOT NULL</span> <span class="k">THEN</span> 1 <span class="k">ELSE</span> 0 <span class="k">END</span>) = 1 <span class="k">AS</span> has_presumptive
+    <span class="k">FROM</span> c d
+    <span class="k">LEFT</span> <span class="k">JOIN</span> c p
+      <span class="k">ON</span> p.member_id = d.member_id
+     <span class="k">AND</span> p.cpt_code = '80307'
+     <span class="k">AND</span> p.service_date <span class="k">BETWEEN</span> d.service_date - <span class="k">INTERVAL</span> '30 days' <span class="k">AND</span> d.service_date
+    <span class="k">WHERE</span> d.cpt_code = 'G0483'
+    <span class="k">GROUP BY</span> d.claim_id
+),</pre></details>
+  </section>
+
+  <!-- 03 IMPACT -->
+  <section class="block" id="impact">
+    <div class="sec-head">
+      <div class="sec-no">03</div>
+      <h2>Program impact, client ROI and performance guarantees</h2>
+      <p>Plans went live on different dates, which is what makes a credible counterfactual possible: plans not yet live stand in for what would have happened.</p>
+    </div>
+    <div class="qa">
+      <div><h4>Business question</h4><p>How much did each client save, did we meet the guaranteed return on fees, and is any refund owed?</p></div>
+      <div><h4>Approach</h4><p>Imputation difference-in-differences: fit plan and calendar-month effects on untreated months only, predict each live month's expected PMPM, and price the gap. Recent months are completed with chain-ladder factors first.</p></div>
+      <div><h4>Result</h4><p id="impResult"></p></div>
+    </div>
+    <div class="tbl-wrap"><table id="scoreTable"></table></div>
+    <div class="grid2 mt16">
+      <div class="panel">
+        <h3>How I checked the estimate</h3>
+        <ul class="tight small" id="impChecks"></ul>
+      </div>
+      <div class="panel">
+        <h3>Claims completion (IBNR) at valuation</h3>
+        <div class="sub">Share of eventual dollars already paid, by service month</div>
+        <div class="tbl-wrap" style="border:0"><table id="cfTable"></table></div>
+      </div>
+    </div>
+    <div class="callout" id="pinecrestNote"></div>
+    <details class="code"><summary>Counterfactual estimator <span>src/analysis/program_impact.py</span></summary><pre><span class="k">def</span> fit_untreated_fe(df: pd.DataFrame, y: str, treat_col: str = "treated", trends: bool = TRENDS) -&gt; pd.DataFrame:
+    """Weighted LS of log(y) on client + month dummies using untreated rows; predict all rows."""
+    train = df[~df[treat_col]]
+    clients = sorted(df["client_id"].unique())
+    months = sorted(df["service_month"].unique())
+
+    nc, nm = len(clients), len(months)
+
+    <span class="k">def</span> design(d):
+        <span class="c"># client intercepts + client-specific linear trends + common calendar-month effects</span>
+        X = np.zeros((len(d), 2 * nc + nm - 2))
+        ci = d["client_id"].map({c: i <span class="k">for</span> i, c <span class="k">in</span> enumerate(clients)}).to_numpy()
+        mi = d["service_month"].map({m: i <span class="k">for</span> i, m <span class="k">in</span> enumerate(months)}).to_numpy()
+        rows = np.arange(len(d))
+        X[rows, ci] = 1
+        t = (mi - (nm - 1) / 2) / 12.0
+        trend_cols = nc + ci
+        keep = (ci &gt; 0) &amp; trends   <span class="c"># first client's trend is absorbed by the month effects</span>
+        X[rows[keep], trend_cols[keep] - 1] = t[keep]
+        mask = mi &gt; 0
+        X[rows[mask], 2 * nc - 1 + mi[mask] - 1] = 1
+        <span class="k">return</span> X
+
+    w = np.sqrt(train["member_months"].to_numpy())
+    beta, *_ = np.linalg.lstsq(design(train) * w[:, None], np.log(train[y].to_numpy()) * w, rcond=None)
+    out = df.copy()
+    out["expected"] = np.exp(design(df) @ beta)
+    resid = np.log(train[y].to_numpy()) - design(train) @ beta
+    out.attrs["resid_sd"] = float(np.sqrt(np.average(resid ** 2, weights=train["member_months"])))
+    <span class="k">return</span> out</pre></details>
+  </section>
+
+  <!-- 04 FORECAST -->
+  <section class="block" id="forecast">
+    <div class="sec-head">
+      <div class="sec-no">04</div>
+      <h2>Lab spend forecast, tested out of sample</h2>
+      <p>Finance needs 2027 lab spend by client for budgeting and renewal pricing. The model is judged on months it never saw, against the simple alternative an analyst would otherwise use.</p>
+    </div>
+    <div class="qa">
+      <div><h4>Business question</h4><p>What will each plan's lab spend be in 2027, and how far off could we be?</p></div>
+      <div><h4>Approach</h4><p>Log-PMPM regression with plan levels, a client-specific program shift, pooled trend and month-of-year seasonality. Backtest: train through Dec 2025, test Jan–May 2026, compare with seasonal-naive.</p></div>
+      <div><h4>Result</h4><p id="fcResult"></p></div>
+    </div>
+    <div>
+      <div class="panel">
+        <h3 id="fcTitle">PMPM history and forecast</h3>
+        <div class="sub">Pick a plan in the dashboard above to switch this chart</div>
+        <div class="legend"><span><i></i>Actual (completed)</span><span><i class="ref"></i>Backtest forecast</span><span><i class="band"></i>Forecast, 80% range</span></div>
+        <div class="chart-box tall"><canvas id="fcChart" aria-label="Forecast chart"></canvas></div>
+      </div>
+      <div class="grid2 mt16">
+        <div class="tbl-wrap"><table id="btTable"></table></div>
+        <div class="tbl-wrap"><table id="y27Table"></table></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 PRICING -->
+  <section class="block" id="pricing">
+    <div class="sec-head">
+      <div class="sec-no">05</div>
+      <h2>Pricing a prospect: Lakeshore Senior Plan</h2>
+      <p>A Medicare Advantage plan considering the program. The model runs the policy engine on its own claims, applies capture rates actually achieved at live clients, and tests three contract structures.</p>
+    </div>
+    <div class="qa">
+      <div><h4>Business question</h4><p>What can we credibly promise Lakeshore, and which fee structure works for both sides?</p></div>
+      <div><h4>Approach</h4><p>Baseline avoidable PMPM by policy (last 12 complete months) × capture (low = weakest live client, base = MA peer, high = strongest) × trend × year-1 ramp. Delivered as an Excel model with live formulas and editable inputs.</p></div>
+      <div><h4>Result</h4><p id="prResult"></p></div>
+    </div>
+    <div class="grid2">
+      <div class="tbl-wrap"><table id="prPolicyTable"></table></div>
+      <div class="tbl-wrap"><table id="prScenTable"></table></div>
+    </div>
+    <p class="small muted mt16">Workbook: <code>outputs/Lakeshore_pricing_model.xlsx</code> (Inputs, Pricing Model, Peer Benchmarks, Notes; 89 formulas, recalculated with zero errors and cross-checked against the Python calculation).</p>
+  </section>
+
+  <!-- 06 AI -->
+  <section class="block" id="ai">
+    <div class="sec-head">
+      <div class="sec-no">06</div>
+      <h2>AI-enabled analytics with guardrails</h2>
+      <p>A semantic model in Snowflake Cortex Analyst format lets account managers ask questions in plain English and get governed SQL, using the same metric definitions as the dashboards.</p>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <h3>Why the guardrail matters</h3>
+        <p class="small mt16">The classic mistake in this data is summing member months across test-category rows, which makes PMPM about five times too low. The semantic model documents the rule, and CI runs every verified query against an independent pandas calculation, including a check that the wrong version would be caught.</p>
+        <ul class="tight small" id="semChecks"></ul>
+      </div>
+      <details class="code code-open" open><summary>Semantic model (excerpt) <span>semantic/lab_analytics.yaml</span></summary><pre>      - <span class="k">name</span>: member_months
+        <span class="k">expr</span>: member_months
+        <span class="k">data_type</span>: NUMBER
+        <span class="k">description</span>: &gt;
+          Member months for the client and month. Repeated on every test_category row,
+          so it must be taken once per client-month (MAX), never summed across categories.
+    <span class="k">metrics</span>:
+      - <span class="k">name</span>: total_allowed
+        <span class="k">expr</span>: SUM(allowed)
+      - <span class="k">name</span>: avoidable_share
+        <span class="k">description</span>: Avoidable dollars as a share of lab spend.
+        <span class="k">expr</span>: SUM(avoidable_allowed) / NULLIF(SUM(allowed), 0)
+      - <span class="k">name</span>: oon_share
+        <span class="k">description</span>: Out-of-network share of lab spend.
+        <span class="k">expr</span>: SUM(oon_allowed) / NULLIF(SUM(allowed), 0)
+...
+<span class="k">verified_queries</span>:
+  - <span class="k">name</span>: pmpm_by_client_2025
+    <span class="k">question</span>: What was lab allowed PMPM by client in calendar 2025?
+    <span class="k">use_as_onboarding_question</span>: true
+    <span class="k">verified_by</span>: Health Analytics
+    <span class="k">sql</span>: |
+      WITH cm AS (
+        SELECT client_name, service_month, SUM(allowed) AS allowed, MAX(member_months) AS mm
+        FROM __client_month_metrics
+        WHERE service_month BETWEEN '2025-01-01' AND '2025-12-01'
+        GROUP BY client_name, service_month
+      )
+      SELECT client_name, ROUND(SUM(allowed) / SUM(mm), 2) AS allowed_pmpm
+      FROM cm GROUP BY client_name ORDER BY allowed_pmpm DESC</pre></details>
+    </div>
+  </section>
+
+  <!-- 07 FIT -->
+  <section class="block" id="fit">
+    <div class="sec-head">
+      <div class="sec-no">07</div>
+      <h2>Where each responsibility in the role shows up</h2>
+      <p>A map from the job description to the work above, so a reviewer can go straight to evidence.</p>
+    </div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Responsibility</th><th>Evidence</th></tr></thead>
+      <tbody>
+        <tr><td>SQL queries, scripts, stored procedures</td><td>Staging, QA and mart SQL; <code>SP_REFRESH_LAB_MARTS</code> in Snowflake Scripting (01, 02)</td></tr>
+        <tr><td>Snowflake for preparation, modeling, automation</td><td>Schemas, stage, <code>COPY INTO</code>, clustered RAW table, scheduled TASK and ALERT (01)</td></tr>
+        <tr><td>Dashboards and visualizations</td><td>Client dashboard (00) built on <code>marts.client_month_metrics</code>, the Tableau data source</td></tr>
+        <tr><td>Models for underwriting, pricing, forecasting, client value</td><td>Program impact and guarantee scorecard (03), forecast (04), prospect pricing workbook (05)</td></tr>
+        <tr><td>ETL and automated jobs</td><td>Pipeline runner with quality gate, GitHub Actions schedule, Snowflake TASK (01)</td></tr>
+        <tr><td>Validation, reconciliation, QA</td><td>9 checks, GL reconciliation to the batch, 13 pytest tests (01, 02)</td></tr>
+        <tr><td>Client performance and recommendations</td><td>Pinecrest diagnosis and next steps (03), dashboard notes (00)</td></tr>
+        <tr><td>AI-enabled tools, natural-language querying</td><td>Cortex Analyst semantic model with tested verified queries (06)</td></tr>
+        <tr><td>Excel for analysis</td><td>Pricing workbook with scenario columns, color-coded inputs, documented assumptions (05)</td></tr>
+        <tr><td>Presenting to technical and non-technical audiences</td><td>Each case study leads with the business question and answer, then method and code</td></tr>
+      </tbody>
+    </table></div>
+    <h3 class="mt24" style="margin-bottom:10px">Run it yourself</h3>
+    <pre style="border-radius:10px">pip install -r requirements.txt
+make all        # generate data -&gt; pipeline + quality gate -&gt; analyses -&gt; tests -&gt; site
+
+# or step by step
+python src/generate_data.py
+python src/pipeline/run_pipeline.py
+python src/analysis/completion_factors.py &amp;&amp; python src/analysis/program_impact.py
+python src/analysis/forecast.py &amp;&amp; python src/analysis/pricing_model.py
+python src/ai/verify_semantic_queries.py &amp;&amp; pytest -q</pre>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">Ram Akhmitzyanov · arramzis@gmail.com · Built for the Data Analyst, Health Analytics role. Health plans, labs and members are fictional; test codes, ICD-10 codes and policy logic follow real-world conventions.</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const DATA = {"program_impact": {"total_savings": 1254934.8397506794, "total_fees": 491388.69999999995, "portfolio_roi": 2.5538536798886087, "placebo_in_time_effect": -0.03506768350343603, "placebo_core_util_effect": 0.004574198124951856, "resid_sd": 0.05856003318320204, "clients": [{"client_id": "C01", "client_name": "Suncoast Health Partners", "line_of_business": "Commercial", "go_live": "2025-01", "post_months": 17, "post_member_months": 166250, "expected_pmpm": 19.7797, "actual_pmpm": 16.6466, "savings_pmpm": 3.133, "savings_pct": 0.1584, "savings_pct_low": 0.1306, "savings_pct_high": 0.1862, "gross_savings": 520867.8258, "fees": 141312.5, "roi_multiple": 3.6859, "guarantee_multiple": 2.0, "guarantee_met": true, "fee_refund_due": 0.0, "avoidable_pmpm_pre": 4.6627, "avoidable_pmpm_post": 2.1062, "bottom_up_savings": 425009.9854, "oon_share_pre": 0.2244, "oon_share_post": 0.0928}, {"client_id": "C02", "client_name": "Bayview Medicare Advantage", "line_of_business": "Medicare Advantage", "go_live": "2025-04", "post_months": 14, "post_member_months": 91662, "expected_pmpm": 24.5708, "actual_pmpm": 22.375, "savings_pmpm": 2.1958, "savings_pct": 0.0894, "savings_pct_low": 0.0587, "savings_pct_high": 0.12, "gross_savings": 201271.2031, "fees": 100828.2, "roi_multiple": 1.9962, "guarantee_multiple": 2.0, "guarantee_met": false, "fee_refund_due": 385.1969, "avoidable_pmpm_pre": 4.92, "avoidable_pmpm_post": 2.9033, "bottom_up_savings": 184852.6166, "oon_share_pre": 0.1657, "oon_share_post": 0.1054}, {"client_id": "C03", "client_name": "Heartland Community Care", "line_of_business": "Medicaid", "go_live": "2024-10", "post_months": 20, "post_member_months": 226385, "expected_pmpm": 12.9595, "actual_pmpm": 10.9054, "savings_pmpm": 2.0542, "savings_pct": 0.1585, "savings_pct_low": 0.1328, "savings_pct_high": 0.1842, "gross_savings": 465034.7336, "fees": 158469.5, "roi_multiple": 2.9345, "guarantee_multiple": 2.5, "guarantee_met": true, "fee_refund_due": 0.0, "avoidable_pmpm_pre": 2.909, "avoidable_pmpm_post": 1.2466, "bottom_up_savings": 376351.4364, "oon_share_pre": 0.2572, "oon_share_post": 0.1113}, {"client_id": "C04", "client_name": "Pinecrest Employer Health", "line_of_business": "Commercial", "go_live": "2025-07", "post_months": 11, "post_member_months": 54399, "expected_pmpm": 18.1132, "actual_pmpm": 18.3726, "savings_pmpm": -0.2594, "savings_pct": -0.0143, "savings_pct_low": -0.0489, "savings_pct_high": 0.0203, "gross_savings": -14112.6395, "fees": 48959.1, "roi_multiple": -0.2883, "guarantee_multiple": 2.0, "guarantee_met": false, "fee_refund_due": 9791.82, "avoidable_pmpm_pre": 4.0294, "avoidable_pmpm_post": 3.5785, "bottom_up_savings": 24529.2799, "oon_share_pre": 0.1947, "oon_share_post": 0.1387}, {"client_id": "C06", "client_name": "Prairie State Medicaid", "line_of_business": "Medicaid", "go_live": "2025-10", "post_months": 8, "post_member_months": 59742, "expected_pmpm": 12.9405, "actual_pmpm": 11.5701, "savings_pmpm": 1.3705, "savings_pct": 0.1059, "savings_pct_low": 0.0653, "savings_pct_high": 0.1465, "gross_savings": 81873.7168, "fees": 41819.4, "roi_multiple": 1.9578, "guarantee_multiple": 2.0, "guarantee_met": false, "fee_refund_due": 1765.0832, "avoidable_pmpm_pre": 2.9588, "avoidable_pmpm_post": 1.7755, "bottom_up_savings": 70693.463, "oon_share_pre": 0.2583, "oon_share_post": 0.1388}], "capture": [{"policy_id": "P01", "pre_pmpm": 0.5396, "post_pmpm": 0.2532, "capture_rate": 0.5423, "capture_min": 0.2374, "capture_max": 0.5861, "capture_ma_peer": 0.5433, "clients_used": 5}, {"policy_id": "P02", "pre_pmpm": 0.4403, "post_pmpm": 0.3364, "capture_rate": 0.2029, "capture_min": 0.1258, "capture_max": 0.2761, "capture_ma_peer": 0.2761, "clients_used": 3}, {"policy_id": "P03", "pre_pmpm": 0.0811, "post_pmpm": 0.035, "capture_rate": 0.582, "capture_min": 0.3683, "capture_max": 0.6418, "capture_ma_peer": 0.5709, "clients_used": 5}, {"policy_id": "P04", "pre_pmpm": 0.3908, "post_pmpm": 0.0747, "capture_rate": 0.7951, "capture_min": 0.6334, "capture_max": 0.8706, "capture_ma_peer": 0.7157, "clients_used": 5}, {"policy_id": "P05", "pre_pmpm": 0.6284, "post_pmpm": 0.3311, "capture_rate": 0.4607, "capture_min": 0.0453, "capture_max": 0.6232, "capture_ma_peer": 0.6232, "clients_used": 5}, {"policy_id": "P06", "pre_pmpm": 0.8851, "post_pmpm": 0.4209, "capture_rate": 0.5337, "capture_min": 0.0355, "capture_max": 0.7076, "capture_ma_peer": 0.4152, "clients_used": 5}, {"policy_id": "P07", "pre_pmpm": 1.2463, "post_pmpm": 0.6714, "capture_rate": 0.4601, "capture_min": 0.1624, "capture_max": 0.5503, "capture_ma_peer": 0.3896, "clients_used": 5}], "series": {"C01": [{"m": "2024-01", "actual": 22.766, "expected": null, "post": false}, {"m": "2024-02", "actual": 19.302, "expected": null, "post": false}, {"m": "2024-03", "actual": 18.222, "expected": null, "post": false}, {"m": "2024-04", "actual": 16.542, "expected": null, "post": false}, {"m": "2024-05", "actual": 18.279, "expected": null, "post": false}, {"m": "2024-06", "actual": 15.758, "expected": null, "post": false}, {"m": "2024-07", "actual": 16.391, "expected": null, "post": false}, {"m": "2024-08", "actual": 17.712, "expected": null, "post": false}, {"m": "2024-09", "actual": 17.69, "expected": null, "post": false}, {"m": "2024-10", "actual": 21.179, "expected": null, "post": false}, {"m": "2024-11", "actual": 19.389, "expected": null, "post": false}, {"m": "2024-12", "actual": 20.95, "expected": null, "post": false}, {"m": "2025-01", "actual": 20.639, "expected": 22.655, "post": true}, {"m": "2025-02", "actual": 18.938, "expected": 21.809, "post": true}, {"m": "2025-03", "actual": 16.687, "expected": 19.355, "post": true}, {"m": "2025-04", "actual": 14.74, "expected": 18.607, "post": true}, {"m": "2025-05", "actual": 13.409, "expected": 17.36, "post": true}, {"m": "2025-06", "actual": 14.168, "expected": 17.844, "post": true}, {"m": "2025-07", "actual": 13.707, "expected": 18.045, "post": true}, {"m": "2025-08", "actual": 13.181, "expected": 15.944, "post": true}, {"m": "2025-09", "actual": 15.142, "expected": 21.268, "post": true}, {"m": "2025-10", "actual": 17.042, "expected": 18.208, "post": true}, {"m": "2025-11", "actual": 17.77, "expected": 22.026, "post": true}, {"m": "2025-12", "actual": 16.743, "expected": 21.624, "post": true}, {"m": "2026-01", "actual": 22.34, "expected": 22.268, "post": true}, {"m": "2026-02", "actual": 18.35, "expected": 19.592, "post": true}, {"m": "2026-03", "actual": 18.472, "expected": 21.262, "post": true}, {"m": "2026-04", "actual": 16.074, "expected": 18.006, "post": true}, {"m": "2026-05", "actual": 15.511, "expected": 20.34, "post": true}], "C02": [{"m": "2024-01", "actual": 28.829, "expected": null, "post": false}, {"m": "2024-02", "actual": 27.306, "expected": null, "post": false}, {"m": "2024-03", "actual": 26.29, "expected": null, "post": false}, {"m": "2024-04", "actual": 21.591, "expected": null, "post": false}, {"m": "2024-05", "actual": 19.718, "expected": null, "post": false}, {"m": "2024-06", "actual": 19.153, "expected": null, "post": false}, {"m": "2024-07", "actual": 21.749, "expected": null, "post": false}, {"m": "2024-08", "actual": 21.045, "expected": null, "post": false}, {"m": "2024-09", "actual": 22.209, "expected": null, "post": false}, {"m": "2024-10", "actual": 24.514, "expected": null, "post": false}, {"m": "2024-11", "actual": 24.782, "expected": null, "post": false}, {"m": "2024-12", "actual": 27.315, "expected": null, "post": false}, {"m": "2025-01", "actual": 27.977, "expected": null, "post": false}, {"m": "2025-02", "actual": 26.863, "expected": null, "post": false}, {"m": "2025-03", "actual": 24.845, "expected": null, "post": false}, {"m": "2025-04", "actual": 21.952, "expected": 23.477, "post": true}, {"m": "2025-05", "actual": 17.885, "expected": 21.903, "post": true}, {"m": "2025-06", "actual": 20.678, "expected": 22.514, "post": true}, {"m": "2025-07", "actual": 18.311, "expected": 22.768, "post": true}, {"m": "2025-08", "actual": 20.202, "expected": 20.117, "post": true}, {"m": "2025-09", "actual": 19.71, "expected": 26.834, "post": true}, {"m": "2025-10", "actual": 24.284, "expected": 22.974, "post": true}, {"m": "2025-11", "actual": 24.745, "expected": 27.791, "post": true}, {"m": "2025-12", "actual": 25.931, "expected": 27.283, "post": true}, {"m": "2026-01", "actual": 26.456, "expected": 28.096, "post": true}, {"m": "2026-02", "actual": 23.796, "expected": 24.719, "post": true}, {"m": "2026-03", "actual": 25.001, "expected": 26.826, "post": true}, {"m": "2026-04", "actual": 24.591, "expected": 22.719, "post": true}, {"m": "2026-05", "actual": 19.33, "expected": 25.664, "post": true}], "C03": [{"m": "2024-01", "actual": 15.446, "expected": null, "post": false}, {"m": "2024-02", "actual": 13.032, "expected": null, "post": false}, {"m": "2024-03", "actual": 12.685, "expected": null, "post": false}, {"m": "2024-04", "actual": 11.33, "expected": null, "post": false}, {"m": "2024-05", "actual": 11.597, "expected": null, "post": false}, {"m": "2024-06", "actual": 10.512, "expected": null, "post": false}, {"m": "2024-07", "actual": 9.621, "expected": null, "post": false}, {"m": "2024-08", "actual": 11.161, "expected": null, "post": false}, {"m": "2024-09", "actual": 12.2, "expected": null, "post": false}, {"m": "2024-10", "actual": 10.09, "expected": 12.605, "post": true}, {"m": "2024-11", "actual": 9.796, "expected": 13.106, "post": true}, {"m": "2024-12", "actual": 10.357, "expected": 13.591, "post": true}, {"m": "2025-01", "actual": 12.514, "expected": 14.816, "post": true}, {"m": "2025-02", "actual": 12.005, "expected": 14.262, "post": true}, {"m": "2025-03", "actual": 10.566, "expected": 12.657, "post": true}, {"m": "2025-04", "actual": 11.393, "expected": 12.168, "post": true}, {"m": "2025-05", "actual": 9.064, "expected": 11.352, "post": true}, {"m": "2025-06", "actual": 9.191, "expected": 11.669, "post": true}, {"m": "2025-07", "actual": 8.565, "expected": 11.801, "post": true}, {"m": "2025-08", "actual": 10.313, "expected": 10.426, "post": true}, {"m": "2025-09", "actual": 9.601, "expected": 13.908, "post": true}, {"m": "2025-10", "actual": 11.686, "expected": 11.907, "post": true}, {"m": "2025-11", "actual": 10.99, "expected": 14.404, "post": true}, {"m": "2025-12", "actual": 11.842, "expected": 14.141, "post": true}, {"m": "2026-01", "actual": 14.02, "expected": 14.562, "post": true}, {"m": "2026-02", "actual": 12.879, "expected": 12.812, "post": true}, {"m": "2026-03", "actual": 11.462, "expected": 13.904, "post": true}, {"m": "2026-04", "actual": 11.47, "expected": 11.775, "post": true}, {"m": "2026-05", "actual": 10.107, "expected": 13.302, "post": true}], "C04": [{"m": "2024-01", "actual": 22.242, "expected": null, "post": false}, {"m": "2024-02", "actual": 17.848, "expected": null, "post": false}, {"m": "2024-03", "actual": 16.353, "expected": null, "post": false}, {"m": "2024-04", "actual": 17.377, "expected": null, "post": false}, {"m": "2024-05", "actual": 15.124, "expected": null, "post": false}, {"m": "2024-06", "actual": 14.975, "expected": null, "post": false}, {"m": "2024-07", "actual": 13.738, "expected": null, "post": false}, {"m": "2024-08", "actual": 14.943, "expected": null, "post": false}, {"m": "2024-09", "actual": 15.266, "expected": null, "post": false}, {"m": "2024-10", "actual": 14.226, "expected": null, "post": false}, {"m": "2024-11", "actual": 17.962, "expected": null, "post": false}, {"m": "2024-12", "actual": 20.231, "expected": null, "post": false}, {"m": "2025-01", "actual": 23.805, "expected": null, "post": false}, {"m": "2025-02", "actual": 22.889, "expected": null, "post": false}, {"m": "2025-03", "actual": 16.14, "expected": null, "post": false}, {"m": "2025-04", "actual": 17.013, "expected": null, "post": false}, {"m": "2025-05", "actual": 15.778, "expected": null, "post": false}, {"m": "2025-06", "actual": 17.737, "expected": null, "post": false}, {"m": "2025-07", "actual": 15.571, "expected": 16.44, "post": true}, {"m": "2025-08", "actual": 17.035, "expected": 14.526, "post": true}, {"m": "2025-09", "actual": 17.221, "expected": 19.376, "post": true}, {"m": "2025-10", "actual": 19.34, "expected": 16.589, "post": true}, {"m": "2025-11", "actual": 16.573, "expected": 20.067, "post": true}, {"m": "2025-12", "actual": 19.001, "expected": 19.701, "post": true}, {"m": "2026-01", "actual": 22.349, "expected": 20.288, "post": true}, {"m": "2026-02", "actual": 20.765, "expected": 17.85, "post": true}, {"m": "2026-03", "actual": 20.649, "expected": 19.371, "post": true}, {"m": "2026-04", "actual": 18.758, "expected": 16.405, "post": true}, {"m": "2026-05", "actual": 14.712, "expected": 18.532, "post": true}], "C05": [{"m": "2024-01", "actual": 28.108, "expected": null, "post": false}, {"m": "2024-02", "actual": 26.059, "expected": null, "post": false}, {"m": "2024-03", "actual": 23.127, "expected": null, "post": false}, {"m": "2024-04", "actual": 25.09, "expected": null, "post": false}, {"m": "2024-05", "actual": 17.384, "expected": null, "post": false}, {"m": "2024-06", "actual": 19.377, "expected": null, "post": false}, {"m": "2024-07", "actual": 23.344, "expected": null, "post": false}, {"m": "2024-08", "actual": 20.276, "expected": null, "post": false}, {"m": "2024-09", "actual": 25.022, "expected": null, "post": false}, {"m": "2024-10", "actual": 24.278, "expected": null, "post": false}, {"m": "2024-11", "actual": 27.094, "expected": null, "post": false}, {"m": "2024-12", "actual": 27.493, "expected": null, "post": false}, {"m": "2025-01", "actual": 25.205, "expected": null, "post": false}, {"m": "2025-02", "actual": 28.05, "expected": null, "post": false}, {"m": "2025-03", "actual": 24.439, "expected": null, "post": false}, {"m": "2025-04", "actual": 23.803, "expected": null, "post": false}, {"m": "2025-05", "actual": 21.112, "expected": null, "post": false}, {"m": "2025-06", "actual": 22.775, "expected": null, "post": false}, {"m": "2025-07", "actual": 24.731, "expected": null, "post": false}, {"m": "2025-08", "actual": 21.905, "expected": null, "post": false}, {"m": "2025-09", "actual": 24.776, "expected": null, "post": false}, {"m": "2025-10", "actual": 23.065, "expected": null, "post": false}, {"m": "2025-11", "actual": 27.901, "expected": null, "post": false}, {"m": "2025-12", "actual": 27.392, "expected": null, "post": false}, {"m": "2026-01", "actual": 28.208, "expected": null, "post": false}, {"m": "2026-02", "actual": 24.818, "expected": null, "post": false}, {"m": "2026-03", "actual": 26.933, "expected": null, "post": false}, {"m": "2026-04", "actual": 22.81, "expected": null, "post": false}, {"m": "2026-05", "actual": 25.766, "expected": null, "post": false}], "C06": [{"m": "2024-01", "actual": 14.448, "expected": null, "post": false}, {"m": "2024-02", "actual": 12.928, "expected": null, "post": false}, {"m": "2024-03", "actual": 12.817, "expected": null, "post": false}, {"m": "2024-04", "actual": 12.621, "expected": null, "post": false}, {"m": "2024-05", "actual": 11.485, "expected": null, "post": false}, {"m": "2024-06", "actual": 10.919, "expected": null, "post": false}, {"m": "2024-07", "actual": 9.906, "expected": null, "post": false}, {"m": "2024-08", "actual": 9.784, "expected": null, "post": false}, {"m": "2024-09", "actual": 11.699, "expected": null, "post": false}, {"m": "2024-10", "actual": 12.333, "expected": null, "post": false}, {"m": "2024-11", "actual": 13.174, "expected": null, "post": false}, {"m": "2024-12", "actual": 11.746, "expected": null, "post": false}, {"m": "2025-01", "actual": 14.323, "expected": null, "post": false}, {"m": "2025-02", "actual": 12.74, "expected": null, "post": false}, {"m": "2025-03", "actual": 12.84, "expected": null, "post": false}, {"m": "2025-04", "actual": 11.702, "expected": null, "post": false}, {"m": "2025-05", "actual": 11.278, "expected": null, "post": false}, {"m": "2025-06", "actual": 10.632, "expected": null, "post": false}, {"m": "2025-07", "actual": 10.943, "expected": null, "post": false}, {"m": "2025-08", "actual": 9.656, "expected": null, "post": false}, {"m": "2025-09", "actual": 14.126, "expected": null, "post": false}, {"m": "2025-10", "actual": 11.296, "expected": 11.542, "post": true}, {"m": "2025-11", "actual": 9.83, "expected": 13.962, "post": true}, {"m": "2025-12", "actual": 11.434, "expected": 13.708, "post": true}, {"m": "2026-01", "actual": 14.13, "expected": 14.116, "post": true}, {"m": "2026-02", "actual": 12.169, "expected": 12.419, "post": true}, {"m": "2026-03", "actual": 11.504, "expected": 13.478, "post": true}, {"m": "2026-04", "actual": 12.221, "expected": 11.414, "post": true}, {"m": "2026-05", "actual": 9.976, "expected": 12.894, "post": true}]}}, "forecast": {"underlying_trend": 0.06475682600229016, "sigma": 0.06223750163942464, "annual_backtest_rmse": 0.04631288882484266, "backtest": [{"client_id": "C01", "client_name": "Suncoast Health Partners", "mape_model": 0.0458, "mape_naive": 0.0847, "bias_model": -0.0308}, {"client_id": "C02", "client_name": "Bayview Medicare Advantage", "mape_model": 0.0748, "mape_naive": 0.0749, "bias_model": 0.0308}, {"client_id": "C03", "client_name": "Heartland Community Care", "mape_model": 0.0331, "mape_naive": 0.0727, "bias_model": -0.0335}, {"client_id": "C04", "client_name": "Pinecrest Employer Health", "mape_model": 0.051, "mape_naive": 0.1103, "bias_model": 0.0034}, {"client_id": "C05", "client_name": "Lakeshore Senior Plan", "mape_model": 0.1089, "mape_naive": 0.1107, "bias_model": 0.0703}, {"client_id": "C06", "client_name": "Prairie State Medicaid", "mape_model": 0.0687, "mape_naive": 0.0699, "bias_model": -0.07}], "portfolio_backtest_error_model": -0.004813507832461705, "portfolio_backtest_error_naive": -0.031959043740298454, "y2027": [{"client_id": "C01", "spend_2027": 2190273.0, "pmpm_2027": 18.21, "mm_2027": 120288, "client_name": "Suncoast Health Partners", "spend_2027_lo": 2060270.22, "spend_2027_hi": 2320275.77}, {"client_id": "C02", "spend_2027": 2020679.22, "pmpm_2027": 24.94, "mm_2027": 81024, "client_name": "Bayview Medicare Advantage", "spend_2027_lo": 1900742.62, "spend_2027_hi": 2140615.82}, {"client_id": "C03", "spend_2027": 1695264.71, "pmpm_2027": 12.01, "mm_2027": 141180, "client_name": "Heartland Community Care", "spend_2027_lo": 1594642.95, "spend_2027_hi": 1795886.46}, {"client_id": "C04", "spend_2027": 1207278.92, "pmpm_2027": 19.96, "mm_2027": 60492, "client_name": "Pinecrest Employer Health", "spend_2027_lo": 1135621.37, "spend_2027_hi": 1278936.48}, {"client_id": "C05", "spend_2027": 1418701.71, "pmpm_2027": 27.96, "mm_2027": 50736, "client_name": "Lakeshore Senior Plan", "spend_2027_lo": 1334495.24, "spend_2027_hi": 1502908.18}, {"client_id": "C06", "spend_2027": 1086208.66, "pmpm_2027": 11.99, "mm_2027": 90624, "client_name": "Prairie State Medicaid", "spend_2027_lo": 1021737.19, "spend_2027_hi": 1150680.14}], "series": {"C01": {"hist": [{"m": "2024-01", "v": 22.766}, {"m": "2024-02", "v": 19.302}, {"m": "2024-03", "v": 18.222}, {"m": "2024-04", "v": 16.542}, {"m": "2024-05", "v": 18.279}, {"m": "2024-06", "v": 15.758}, {"m": "2024-07", "v": 16.391}, {"m": "2024-08", "v": 17.712}, {"m": "2024-09", "v": 17.69}, {"m": "2024-10", "v": 21.179}, {"m": "2024-11", "v": 19.389}, {"m": "2024-12", "v": 20.95}, {"m": "2025-01", "v": 20.639}, {"m": "2025-02", "v": 18.938}, {"m": "2025-03", "v": 16.687}, {"m": "2025-04", "v": 14.74}, {"m": "2025-05", "v": 13.409}, {"m": "2025-06", "v": 14.168}, {"m": "2025-07", "v": 13.707}, {"m": "2025-08", "v": 13.181}, {"m": "2025-09", "v": 15.142}, {"m": "2025-10", "v": 17.042}, {"m": "2025-11", "v": 17.77}, {"m": "2025-12", "v": 16.743}, {"m": "2026-01", "v": 22.34}, {"m": "2026-02", "v": 18.35}, {"m": "2026-03", "v": 18.472}, {"m": "2026-04", "v": 16.074}, {"m": "2026-05", "v": 15.511}], "backtest": [{"m": "2026-01", "v": 20.574}, {"m": "2026-02", "v": 18.757}, {"m": "2026-03", "v": 17.198}, {"m": "2026-04", "v": 16.45}, {"m": "2026-05", "v": 14.966}], "fcst": [{"m": "2026-06", "v": 15.036, "lo": 13.883, "hi": 16.284}, {"m": "2026-07", "v": 14.678, "lo": 13.553, "hi": 15.897}, {"m": "2026-08", "v": 15.246, "lo": 14.078, "hi": 16.512}, {"m": "2026-09", "v": 16.581, "lo": 15.31, "hi": 17.958}, {"m": "2026-10", "v": 17.99, "lo": 16.61, "hi": 19.483}, {"m": "2026-11", "v": 17.932, "lo": 16.557, "hi": 19.421}, {"m": "2026-12", "v": 18.788, "lo": 17.348, "hi": 20.348}, {"m": "2027-01", "v": 22.139, "lo": 20.442, "hi": 23.977}, {"m": "2027-02", "v": 19.944, "lo": 18.415, "hi": 21.6}, {"m": "2027-03", "v": 18.697, "lo": 17.263, "hi": 20.249}, {"m": "2027-04", "v": 17.867, "lo": 16.497, "hi": 19.35}, {"m": "2027-05", "v": 16.077, "lo": 14.845, "hi": 17.412}, {"m": "2027-06", "v": 16.01, "lo": 14.782, "hi": 17.339}, {"m": "2027-07", "v": 15.629, "lo": 14.43, "hi": 16.926}, {"m": "2027-08", "v": 16.234, "lo": 14.989, "hi": 17.582}, {"m": "2027-09", "v": 17.655, "lo": 16.301, "hi": 19.121}, {"m": "2027-10", "v": 19.154, "lo": 17.686, "hi": 20.745}, {"m": "2027-11", "v": 19.093, "lo": 17.63, "hi": 20.679}, {"m": "2027-12", "v": 20.005, "lo": 18.471, "hi": 21.666}]}, "C02": {"hist": [{"m": "2024-01", "v": 28.829}, {"m": "2024-02", "v": 27.306}, {"m": "2024-03", "v": 26.29}, {"m": "2024-04", "v": 21.591}, {"m": "2024-05", "v": 19.718}, {"m": "2024-06", "v": 19.153}, {"m": "2024-07", "v": 21.749}, {"m": "2024-08", "v": 21.045}, {"m": "2024-09", "v": 22.209}, {"m": "2024-10", "v": 24.514}, {"m": "2024-11", "v": 24.782}, {"m": "2024-12", "v": 27.315}, {"m": "2025-01", "v": 27.977}, {"m": "2025-02", "v": 26.863}, {"m": "2025-03", "v": 24.845}, {"m": "2025-04", "v": 21.952}, {"m": "2025-05", "v": 17.885}, {"m": "2025-06", "v": 20.678}, {"m": "2025-07", "v": 18.311}, {"m": "2025-08", "v": 20.202}, {"m": "2025-09", "v": 19.71}, {"m": "2025-10", "v": 24.284}, {"m": "2025-11", "v": 24.745}, {"m": "2025-12", "v": 25.931}, {"m": "2026-01", "v": 26.456}, {"m": "2026-02", "v": 23.796}, {"m": "2026-03", "v": 25.001}, {"m": "2026-04", "v": 24.591}, {"m": "2026-05", "v": 19.33}], "backtest": [{"m": "2026-01", "v": 28.745}, {"m": "2026-02", "v": 26.206}, {"m": "2026-03", "v": 24.028}, {"m": "2026-04", "v": 22.983}, {"m": "2026-05", "v": 20.91}], "fcst": [{"m": "2026-06", "v": 20.594, "lo": 19.015, "hi": 22.304}, {"m": "2026-07", "v": 20.104, "lo": 18.562, "hi": 21.773}, {"m": "2026-08", "v": 20.882, "lo": 19.281, "hi": 22.616}, {"m": "2026-09", "v": 22.71, "lo": 20.969, "hi": 24.596}, {"m": "2026-10", "v": 24.639, "lo": 22.75, "hi": 26.685}, {"m": "2026-11", "v": 24.561, "lo": 22.678, "hi": 26.6}, {"m": "2026-12", "v": 25.733, "lo": 23.76, "hi": 27.87}, {"m": "2027-01", "v": 30.322, "lo": 27.998, "hi": 32.84}, {"m": "2027-02", "v": 27.316, "lo": 25.221, "hi": 29.584}, {"m": "2027-03", "v": 25.608, "lo": 23.645, "hi": 27.734}, {"m": "2027-04", "v": 24.471, "lo": 22.595, "hi": 26.503}, {"m": "2027-05", "v": 22.02, "lo": 20.332, "hi": 23.849}, {"m": "2027-06", "v": 21.928, "lo": 20.247, "hi": 23.748}, {"m": "2027-07", "v": 21.405, "lo": 19.764, "hi": 23.183}, {"m": "2027-08", "v": 22.235, "lo": 20.53, "hi": 24.081}, {"m": "2027-09", "v": 24.181, "lo": 22.327, "hi": 26.188}, {"m": "2027-10", "v": 26.235, "lo": 24.224, "hi": 28.413}, {"m": "2027-11", "v": 26.151, "lo": 24.146, "hi": 28.322}, {"m": "2027-12", "v": 27.4, "lo": 25.299, "hi": 29.675}]}, "C03": {"hist": [{"m": "2024-01", "v": 15.446}, {"m": "2024-02", "v": 13.032}, {"m": "2024-03", "v": 12.685}, {"m": "2024-04", "v": 11.33}, {"m": "2024-05", "v": 11.597}, {"m": "2024-06", "v": 10.512}, {"m": "2024-07", "v": 9.621}, {"m": "2024-08", "v": 11.161}, {"m": "2024-09", "v": 12.2}, {"m": "2024-10", "v": 10.09}, {"m": "2024-11", "v": 9.796}, {"m": "2024-12", "v": 10.357}, {"m": "2025-01", "v": 12.514}, {"m": "2025-02", "v": 12.005}, {"m": "2025-03", "v": 10.566}, {"m": "2025-04", "v": 11.393}, {"m": "2025-05", "v": 9.064}, {"m": "2025-06", "v": 9.191}, {"m": "2025-07", "v": 8.565}, {"m": "2025-08", "v": 10.313}, {"m": "2025-09", "v": 9.601}, {"m": "2025-10", "v": 11.686}, {"m": "2025-11", "v": 10.99}, {"m": "2025-12", "v": 11.842}, {"m": "2026-01", "v": 14.02}, {"m": "2026-02", "v": 12.879}, {"m": "2026-03", "v": 11.462}, {"m": "2026-04", "v": 11.47}, {"m": "2026-05", "v": 10.107}], "backtest": [{"m": "2026-01", "v": 13.552}, {"m": "2026-02", "v": 12.355}, {"m": "2026-03", "v": 11.328}, {"m": "2026-04", "v": 10.835}, {"m": "2026-05", "v": 9.858}], "fcst": [{"m": "2026-06", "v": 9.916, "lo": 9.155, "hi": 10.739}, {"m": "2026-07", "v": 9.68, "lo": 8.937, "hi": 10.483}, {"m": "2026-08", "v": 10.054, "lo": 9.284, "hi": 10.889}, {"m": "2026-09", "v": 10.934, "lo": 10.096, "hi": 11.842}, {"m": "2026-10", "v": 11.863, "lo": 10.954, "hi": 12.848}, {"m": "2026-11", "v": 11.826, "lo": 10.919, "hi": 12.807}, {"m": "2026-12", "v": 12.39, "lo": 11.44, "hi": 13.419}, {"m": "2027-01", "v": 14.6, "lo": 13.48, "hi": 15.812}, {"m": "2027-02", "v": 13.152, "lo": 12.144, "hi": 14.244}, {"m": "2027-03", "v": 12.33, "lo": 11.385, "hi": 13.354}, {"m": "2027-04", "v": 11.783, "lo": 10.879, "hi": 12.761}, {"m": "2027-05", "v": 10.602, "lo": 9.79, "hi": 11.483}, {"m": "2027-06", "v": 10.558, "lo": 9.748, "hi": 11.434}, {"m": "2027-07", "v": 10.306, "lo": 9.516, "hi": 11.162}, {"m": "2027-08", "v": 10.706, "lo": 9.885, "hi": 11.594}, {"m": "2027-09", "v": 11.643, "lo": 10.75, "hi": 12.609}, {"m": "2027-10", "v": 12.632, "lo": 11.663, "hi": 13.68}, {"m": "2027-11", "v": 12.591, "lo": 11.626, "hi": 13.637}, {"m": "2027-12", "v": 13.193, "lo": 12.181, "hi": 14.288}]}, "C04": {"hist": [{"m": "2024-01", "v": 22.242}, {"m": "2024-02", "v": 17.848}, {"m": "2024-03", "v": 16.353}, {"m": "2024-04", "v": 17.377}, {"m": "2024-05", "v": 15.124}, {"m": "2024-06", "v": 14.975}, {"m": "2024-07", "v": 13.738}, {"m": "2024-08", "v": 14.943}, {"m": "2024-09", "v": 15.266}, {"m": "2024-10", "v": 14.226}, {"m": "2024-11", "v": 17.962}, {"m": "2024-12", "v": 20.231}, {"m": "2025-01", "v": 23.805}, {"m": "2025-02", "v": 22.889}, {"m": "2025-03", "v": 16.14}, {"m": "2025-04", "v": 17.013}, {"m": "2025-05", "v": 15.778}, {"m": "2025-06", "v": 17.737}, {"m": "2025-07", "v": 15.571}, {"m": "2025-08", "v": 17.035}, {"m": "2025-09", "v": 17.221}, {"m": "2025-10", "v": 19.34}, {"m": "2025-11", "v": 16.573}, {"m": "2025-12", "v": 19.001}, {"m": "2026-01", "v": 22.349}, {"m": "2026-02", "v": 20.765}, {"m": "2026-03", "v": 20.649}, {"m": "2026-04", "v": 18.758}, {"m": "2026-05", "v": 14.712}], "backtest": [{"m": "2026-01", "v": 22.822}, {"m": "2026-02", "v": 20.807}, {"m": "2026-03", "v": 19.077}, {"m": "2026-04", "v": 18.248}, {"m": "2026-05", "v": 16.602}], "fcst": [{"m": "2026-06", "v": 16.48, "lo": 15.217, "hi": 17.849}, {"m": "2026-07", "v": 16.088, "lo": 14.855, "hi": 17.424}, {"m": "2026-08", "v": 16.711, "lo": 15.43, "hi": 18.099}, {"m": "2026-09", "v": 18.174, "lo": 16.78, "hi": 19.683}, {"m": "2026-10", "v": 19.718, "lo": 18.206, "hi": 21.355}, {"m": "2026-11", "v": 19.655, "lo": 18.148, "hi": 21.287}, {"m": "2026-12", "v": 20.593, "lo": 19.014, "hi": 22.303}, {"m": "2027-01", "v": 24.265, "lo": 22.405, "hi": 26.28}, {"m": "2027-02", "v": 21.859, "lo": 20.183, "hi": 23.674}, {"m": "2027-03", "v": 20.493, "lo": 18.922, "hi": 22.194}, {"m": "2027-04", "v": 19.583, "lo": 18.082, "hi": 21.209}, {"m": "2027-05", "v": 17.622, "lo": 16.271, "hi": 19.085}, {"m": "2027-06", "v": 17.548, "lo": 16.202, "hi": 19.005}, {"m": "2027-07", "v": 17.13, "lo": 15.816, "hi": 18.552}, {"m": "2027-08", "v": 17.793, "lo": 16.429, "hi": 19.271}, {"m": "2027-09", "v": 19.351, "lo": 17.867, "hi": 20.957}, {"m": "2027-10", "v": 20.994, "lo": 19.385, "hi": 22.738}, {"m": "2027-11", "v": 20.927, "lo": 19.323, "hi": 22.665}, {"m": "2027-12", "v": 21.927, "lo": 20.246, "hi": 23.747}]}, "C05": {"hist": [{"m": "2024-01", "v": 28.108}, {"m": "2024-02", "v": 26.059}, {"m": "2024-03", "v": 23.127}, {"m": "2024-04", "v": 25.09}, {"m": "2024-05", "v": 17.384}, {"m": "2024-06", "v": 19.377}, {"m": "2024-07", "v": 23.344}, {"m": "2024-08", "v": 20.276}, {"m": "2024-09", "v": 25.022}, {"m": "2024-10", "v": 24.278}, {"m": "2024-11", "v": 27.094}, {"m": "2024-12", "v": 27.493}, {"m": "2025-01", "v": 25.205}, {"m": "2025-02", "v": 28.05}, {"m": "2025-03", "v": 24.439}, {"m": "2025-04", "v": 23.803}, {"m": "2025-05", "v": 21.112}, {"m": "2025-06", "v": 22.775}, {"m": "2025-07", "v": 24.731}, {"m": "2025-08", "v": 21.905}, {"m": "2025-09", "v": 24.776}, {"m": "2025-10", "v": 23.065}, {"m": "2025-11", "v": 27.901}, {"m": "2025-12", "v": 27.392}, {"m": "2026-01", "v": 28.208}, {"m": "2026-02", "v": 24.818}, {"m": "2026-03", "v": 26.933}, {"m": "2026-04", "v": 22.81}, {"m": "2026-05", "v": 25.766}], "backtest": [{"m": "2026-01", "v": 32.192}, {"m": "2026-02", "v": 29.349}, {"m": "2026-03", "v": 26.91}, {"m": "2026-04", "v": 25.74}, {"m": "2026-05", "v": 23.418}], "fcst": [{"m": "2026-06", "v": 23.09, "lo": 21.32, "hi": 25.008}, {"m": "2026-07", "v": 22.541, "lo": 20.813, "hi": 24.412}, {"m": "2026-08", "v": 23.414, "lo": 21.619, "hi": 25.358}, {"m": "2026-09", "v": 25.463, "lo": 23.511, "hi": 27.577}, {"m": "2026-10", "v": 27.626, "lo": 25.508, "hi": 29.92}, {"m": "2026-11", "v": 27.538, "lo": 25.427, "hi": 29.824}, {"m": "2026-12", "v": 28.853, "lo": 26.641, "hi": 31.248}, {"m": "2027-01", "v": 33.998, "lo": 31.392, "hi": 36.821}, {"m": "2027-02", "v": 30.627, "lo": 28.279, "hi": 33.17}, {"m": "2027-03", "v": 28.712, "lo": 26.511, "hi": 31.096}, {"m": "2027-04", "v": 27.438, "lo": 25.334, "hi": 29.716}, {"m": "2027-05", "v": 24.689, "lo": 22.797, "hi": 26.739}, {"m": "2027-06", "v": 24.586, "lo": 22.701, "hi": 26.627}, {"m": "2027-07", "v": 24.0, "lo": 22.16, "hi": 25.993}, {"m": "2027-08", "v": 24.93, "lo": 23.019, "hi": 27.0}, {"m": "2027-09", "v": 27.112, "lo": 25.033, "hi": 29.363}, {"m": "2027-10", "v": 29.415, "lo": 27.16, "hi": 31.857}, {"m": "2027-11", "v": 29.321, "lo": 27.073, "hi": 31.756}, {"m": "2027-12", "v": 30.721, "lo": 28.366, "hi": 33.272}]}, "C06": {"hist": [{"m": "2024-01", "v": 14.448}, {"m": "2024-02", "v": 12.928}, {"m": "2024-03", "v": 12.817}, {"m": "2024-04", "v": 12.621}, {"m": "2024-05", "v": 11.485}, {"m": "2024-06", "v": 10.919}, {"m": "2024-07", "v": 9.906}, {"m": "2024-08", "v": 9.784}, {"m": "2024-09", "v": 11.699}, {"m": "2024-10", "v": 12.333}, {"m": "2024-11", "v": 13.174}, {"m": "2024-12", "v": 11.746}, {"m": "2025-01", "v": 14.323}, {"m": "2025-02", "v": 12.74}, {"m": "2025-03", "v": 12.84}, {"m": "2025-04", "v": 11.702}, {"m": "2025-05", "v": 11.278}, {"m": "2025-06", "v": 10.632}, {"m": "2025-07", "v": 10.943}, {"m": "2025-08", "v": 9.656}, {"m": "2025-09", "v": 14.126}, {"m": "2025-10", "v": 11.296}, {"m": "2025-11", "v": 9.83}, {"m": "2025-12", "v": 11.434}, {"m": "2026-01", "v": 14.13}, {"m": "2026-02", "v": 12.169}, {"m": "2026-03", "v": 11.504}, {"m": "2026-04", "v": 12.221}, {"m": "2026-05", "v": 9.976}], "backtest": [{"m": "2026-01", "v": 13.055}, {"m": "2026-02", "v": 11.902}, {"m": "2026-03", "v": 10.913}, {"m": "2026-04", "v": 10.438}, {"m": "2026-05", "v": 9.497}], "fcst": [{"m": "2026-06", "v": 9.898, "lo": 9.139, "hi": 10.719}, {"m": "2026-07", "v": 9.662, "lo": 8.921, "hi": 10.464}, {"m": "2026-08", "v": 10.036, "lo": 9.267, "hi": 10.869}, {"m": "2026-09", "v": 10.914, "lo": 10.078, "hi": 11.821}, {"m": "2026-10", "v": 11.842, "lo": 10.934, "hi": 12.825}, {"m": "2026-11", "v": 11.804, "lo": 10.899, "hi": 12.784}, {"m": "2026-12", "v": 12.368, "lo": 11.419, "hi": 13.394}, {"m": "2027-01", "v": 14.573, "lo": 13.456, "hi": 15.783}, {"m": "2027-02", "v": 13.128, "lo": 12.121, "hi": 14.218}, {"m": "2027-03", "v": 12.307, "lo": 11.364, "hi": 13.329}, {"m": "2027-04", "v": 11.761, "lo": 10.859, "hi": 12.738}, {"m": "2027-05", "v": 10.583, "lo": 9.772, "hi": 11.462}, {"m": "2027-06", "v": 10.538, "lo": 9.731, "hi": 11.414}, {"m": "2027-07", "v": 10.288, "lo": 9.499, "hi": 11.142}, {"m": "2027-08", "v": 10.686, "lo": 9.867, "hi": 11.573}, {"m": "2027-09", "v": 11.621, "lo": 10.73, "hi": 12.586}, {"m": "2027-10", "v": 12.609, "lo": 11.642, "hi": 13.655}, {"m": "2027-11", "v": 12.568, "lo": 11.605, "hi": 13.612}, {"m": "2027-12", "v": 13.168, "lo": 12.159, "hi": 14.262}]}}}, "pricing": {"members": 4228, "baseline_pmpm": 25.0986359221169, "trend": 0.06475682600229016, "avoidable": {"P01": 0.9954908853039166, "P02": 0.699721373868457, "P03": 0.15940212523067923, "P04": 0.13306641997567037, "P05": 1.0337256124228573, "P06": 0.9403664949916479, "P07": 1.5738112867761869}, "avoidable_total": 5.535584198569415, "capture": [{"policy_id": "P01", "pre_pmpm": 0.5396, "post_pmpm": 0.2532, "capture_rate": 0.5423, "capture_min": 0.2374, "capture_max": 0.5861, "capture_ma_peer": 0.5433, "clients_used": 5}, {"policy_id": "P02", "pre_pmpm": 0.4403, "post_pmpm": 0.3364, "capture_rate": 0.2029, "capture_min": 0.1258, "capture_max": 0.2761, "capture_ma_peer": 0.2761, "clients_used": 3}, {"policy_id": "P03", "pre_pmpm": 0.0811, "post_pmpm": 0.035, "capture_rate": 0.582, "capture_min": 0.3683, "capture_max": 0.6418, "capture_ma_peer": 0.5709, "clients_used": 5}, {"policy_id": "P04", "pre_pmpm": 0.3908, "post_pmpm": 0.0747, "capture_rate": 0.7951, "capture_min": 0.6334, "capture_max": 0.8706, "capture_ma_peer": 0.7157, "clients_used": 5}, {"policy_id": "P05", "pre_pmpm": 0.6284, "post_pmpm": 0.3311, "capture_rate": 0.4607, "capture_min": 0.0453, "capture_max": 0.6232, "capture_ma_peer": 0.6232, "clients_used": 5}, {"policy_id": "P06", "pre_pmpm": 0.8851, "post_pmpm": 0.4209, "capture_rate": 0.5337, "capture_min": 0.0355, "capture_max": 0.7076, "capture_ma_peer": 0.4152, "clients_used": 5}, {"policy_id": "P07", "pre_pmpm": 1.2463, "post_pmpm": 0.6714, "capture_rate": 0.4601, "capture_min": 0.1624, "capture_max": 0.5503, "capture_ma_peer": 0.3896, "clients_used": 5}], "scenarios": {"low": {"savings_pmpm_y1": 0.7059702093179477, "gross_savings": 35818.1045399554, "pct_of_spend": 0.02560121676387405, "breakeven_fee_pmpm": 0.35298510465897387, "fixed_fee_roi": 0.7059702093179477, "shared_fees": 12536.336588984388, "hybrid_net_fees": 26860.736760744978, "hybrid_roi": 1.333474388993714, "hybrid_refund": 8953.578920248327}, "base": {"savings_pmpm_y1": 2.2572831328283254, "gross_savings": 114525.5170271779, "pct_of_spend": 0.08185783765126008, "breakeven_fee_pmpm": 1.1286415664141627, "fixed_fee_roi": 2.2572831328283254, "shared_fees": 40083.93095951226, "hybrid_net_fees": 47620.42755407668, "hybrid_roi": 2.404966164932587, "hybrid_refund": 0}, "high": {"savings_pmpm_y1": 2.7866952205789834, "gross_savings": 141385.7687112953, "pct_of_spend": 0.10105637242939769, "breakeven_fee_pmpm": 1.3933476102894917, "fixed_fee_roi": 2.7866952205789834, "shared_fees": 49485.01904895335, "hybrid_net_fees": 51649.46530669429, "hybrid_roi": 2.737410113962405, "hybrid_refund": 0}}}, "completion_factors": {"recent": [{"month": "2026-01", "dev": 5, "pct_complete": 0.9996, "cf": 1.0004}, {"month": "2026-02", "dev": 4, "pct_complete": 0.9982, "cf": 1.0018}, {"month": "2026-03", "dev": 3, "pct_complete": 0.9933, "cf": 1.0067}, {"month": "2026-04", "dev": 2, "pct_complete": 0.9746, "cf": 1.026}, {"month": "2026-05", "dev": 1, "pct_complete": 0.8717, "cf": 1.1472}, {"month": "2026-06", "dev": 0, "pct_complete": 0.3276, "cf": 3.0528}], "age_to_age": {"0": 2.661, "1": 1.1181, "2": 1.0192, "3": 1.0049, "4": 1.0014, "5": 1.0002, "6": 1.0001, "7": 1.0001, "8": 1.0}}, "overview": {"members": 54000, "raw_lines": 596994, "payable_claims": 578425, "valid_rate": 0.9952120360030675, "total_allowed": "20515078", "member_months": 1285745, "recon_ok": 179, "recon_total": 180, "avoidable_total": 3784037.0, "flagged_claims": 66236}, "dq_checks": [{"check_name": "null_member_or_client", "severity": "BLOCKER", "failing_rows": 0, "fail_rate": 0.0, "max_fail_rate": "0.000", "status": "PASS"}, {"check_name": "negative_paid_on_paid_status", "severity": "BLOCKER", "failing_rows": 0, "fail_rate": 0.0, "max_fail_rate": "0.000", "status": "PASS"}, {"check_name": "duplicate_claim_line_key", "severity": "WARN", "failing_rows": 2378, "fail_rate": 0.003983, "max_fail_rate": "0.010", "status": "PASS_WITH_EXCEPTIONS"}, {"check_name": "member_not_eligible_on_dos", "severity": "WARN", "failing_rows": 1787, "fail_rate": 0.002993, "max_fail_rate": "0.010", "status": "PASS_WITH_EXCEPTIONS"}, {"check_name": "invalid_or_missing_cpt", "severity": "WARN", "failing_rows": 474, "fail_rate": 0.000794, "max_fail_rate": "0.005", "status": "PASS_WITH_EXCEPTIONS"}, {"check_name": "unknown_lab_id", "severity": "WARN", "failing_rows": 357, "fail_rate": 0.000598, "max_fail_rate": "0.005", "status": "PASS_WITH_EXCEPTIONS"}, {"check_name": "service_date_after_paid_date", "severity": "WARN", "failing_rows": 237, "fail_rate": 0.000397, "max_fail_rate": "0.002", "status": "PASS_WITH_EXCEPTIONS"}, {"check_name": "reversal_without_original", "severity": "WARN", "failing_rows": 15, "fail_rate": 2.5e-05, "max_fail_rate": "0.001", "status": "PASS_WITH_EXCEPTIONS"}, {"check_name": "paid_exceeds_allowed", "severity": "WARN", "failing_rows": 0, "fail_rate": 0.0, "max_fail_rate": "0.001", "status": "PASS"}], "recon_exceptions": [{"client_id": "C02", "paid_month": "2026-03-01 00:00:00", "gl_paid": 211312.17, "claims_paid": "167929.70", "variance": -43382.47, "variance_pct": -0.2053}], "recon_gaps": [{"client_id": "C02", "paid_month": "2026-03-01 00:00:00", "missing_week_batch": "W2"}], "policy_totals": [{"policy_id": "P01", "claims": 15648, "avoidable": 559258.0}, {"policy_id": "P02", "claims": 18648, "avoidable": 215967.0}, {"policy_id": "P03", "claims": 6304, "avoidable": 84596.0}, {"policy_id": "P04", "claims": 1734, "avoidable": 254077.0}, {"policy_id": "P05", "claims": 2247, "avoidable": 661135.0}, {"policy_id": "P06", "claims": 798, "avoidable": 804051.0}, {"policy_id": "P07", "claims": 20857, "avoidable": 1204954.0}], "policy_by_client": [{"client_id": "C01", "program_period": "Post go-live", "policy_id": "P01", "avoidable_pmpm": 0.2827}, {"client_id": "C01", "program_period": "Post go-live", "policy_id": "P02", "avoidable_pmpm": 0.1973}, {"client_id": "C01", "program_period": "Post go-live", "policy_id": "P03", "avoidable_pmpm": 0.0368}, {"client_id": "C01", "program_period": "Post go-live", "policy_id": "P04", "avoidable_pmpm": 0.0427}, {"client_id": "C01", "program_period": "Post go-live", "policy_id": "P05", "avoidable_pmpm": 0.3555}, {"client_id": "C01", "program_period": "Post go-live", "policy_id": "P06", "avoidable_pmpm": 0.5472}, {"client_id": "C01", "program_period": "Post go-live", "policy_id": "P07", "avoidable_pmpm": 0.6221}, {"client_id": "C01", "program_period": "Pre go-live", "policy_id": "P01", "avoidable_pmpm": 0.68}, {"client_id": "C01", "program_period": "Pre go-live", "policy_id": "P03", "avoidable_pmpm": 0.0884}, {"client_id": "C01", "program_period": "Pre go-live", "policy_id": "P04", "avoidable_pmpm": 0.3337}, {"client_id": "C01", "program_period": "Pre go-live", "policy_id": "P05", "avoidable_pmpm": 0.6838}, {"client_id": "C01", "program_period": "Pre go-live", "policy_id": "P06", "avoidable_pmpm": 1.4768}, {"client_id": "C01", "program_period": "Pre go-live", "policy_id": "P07", "avoidable_pmpm": 1.4}, {"client_id": "C02", "program_period": "Post go-live", "policy_id": "P01", "avoidable_pmpm": 0.4495}, {"client_id": "C02", "program_period": "Post go-live", "policy_id": "P02", "avoidable_pmpm": 0.4951}, {"client_id": "C02", "program_period": "Post go-live", "policy_id": "P03", "avoidable_pmpm": 0.0712}, {"client_id": "C02", "program_period": "Post go-live", "policy_id": "P04", "avoidable_pmpm": 0.0426}, {"client_id": "C02", "program_period": "Post go-live", "policy_id": "P05", "avoidable_pmpm": 0.4144}, {"client_id": "C02", "program_period": "Post go-live", "policy_id": "P06", "avoidable_pmpm": 0.4532}, {"client_id": "C02", "program_period": "Post go-live", "policy_id": "P07", "avoidable_pmpm": 0.9484}, {"client_id": "C02", "program_period": "Pre go-live", "policy_id": "P01", "avoidable_pmpm": 0.9967}, {"client_id": "C02", "program_period": "Pre go-live", "policy_id": "P02", "avoidable_pmpm": 0.6913}, {"client_id": "C02", "program_period": "Pre go-live", "policy_id": "P03", "avoidable_pmpm": 0.1676}, {"client_id": "C02", "program_period": "Pre go-live", "policy_id": "P04", "avoidable_pmpm": 0.1527}, {"client_id": "C02", "program_period": "Pre go-live", "policy_id": "P05", "avoidable_pmpm": 1.1114}, {"client_id": "C02", "program_period": "Pre go-live", "policy_id": "P06", "avoidable_pmpm": 0.7797}, {"client_id": "C02", "program_period": "Pre go-live", "policy_id": "P07", "avoidable_pmpm": 1.5689}, {"client_id": "C03", "program_period": "Post go-live", "policy_id": "P01", "avoidable_pmpm": 0.1179}, {"client_id": "C03", "program_period": "Post go-live", "policy_id": "P02", "avoidable_pmpm": 0.1429}, {"client_id": "C03", "program_period": "Post go-live", "policy_id": "P03", "avoidable_pmpm": 0.0168}, {"client_id": "C03", "program_period": "Post go-live", "policy_id": "P04", "avoidable_pmpm": 0.0895}, {"client_id": "C03", "program_period": "Post go-live", "policy_id": "P05", "avoidable_pmpm": 0.2156}, {"client_id": "C03", "program_period": "Post go-live", "policy_id": "P06", "avoidable_pmpm": 0.1514}, {"client_id": "C03", "program_period": "Post go-live", "policy_id": "P07", "avoidable_pmpm": 0.5225}, {"client_id": "C03", "program_period": "Pre go-live", "policy_id": "P01", "avoidable_pmpm": 0.2879}, {"client_id": "C03", "program_period": "Pre go-live", "policy_id": "P03", "avoidable_pmpm": 0.0469}, {"client_id": "C03", "program_period": "Pre go-live", "policy_id": "P04", "avoidable_pmpm": 0.5404}, {"client_id": "C03", "program_period": "Pre go-live", "policy_id": "P05", "avoidable_pmpm": 0.4246}, {"client_id": "C03", "program_period": "Pre go-live", "policy_id": "P06", "avoidable_pmpm": 0.5248}, {"client_id": "C03", "program_period": "Pre go-live", "policy_id": "P07", "avoidable_pmpm": 1.0844}, {"client_id": "C04", "program_period": "Post go-live", "policy_id": "P01", "avoidable_pmpm": 0.4968}, {"client_id": "C04", "program_period": "Post go-live", "policy_id": "P02", "avoidable_pmpm": 0.2265}, {"client_id": "C04", "program_period": "Post go-live", "policy_id": "P03", "avoidable_pmpm": 0.0574}, {"client_id": "C04", "program_period": "Post go-live", "policy_id": "P04", "avoidable_pmpm": 0.0812}, {"client_id": "C04", "program_period": "Post go-live", "policy_id": "P05", "avoidable_pmpm": 0.666}, {"client_id": "C04", "program_period": "Post go-live", "policy_id": "P06", "avoidable_pmpm": 1.0647}, {"client_id": "C04", "program_period": "Post go-live", "policy_id": "P07", "avoidable_pmpm": 0.9474}, {"client_id": "C04", "program_period": "Pre go-live", "policy_id": "P01", "avoidable_pmpm": 0.6625}, {"client_id": "C04", "program_period": "Pre go-live", "policy_id": "P02", "avoidable_pmpm": 0.2634}, {"client_id": "C04", "program_period": "Pre go-live", "policy_id": "P03", "avoidable_pmpm": 0.0919}, {"client_id": "C04", "program_period": "Pre go-live", "policy_id": "P04", "avoidable_pmpm": 0.224}, {"client_id": "C04", "program_period": "Pre go-live", "policy_id": "P05", "avoidable_pmpm": 0.7015}, {"client_id": "C04", "program_period": "Pre go-live", "policy_id": "P06", "avoidable_pmpm": 1.1128}, {"client_id": "C04", "program_period": "Pre go-live", "policy_id": "P07", "avoidable_pmpm": 1.1459}, {"client_id": "C05", "program_period": "Not live", "policy_id": "P01", "avoidable_pmpm": 0.9832}, {"client_id": "C05", "program_period": "Not live", "policy_id": "P02", "avoidable_pmpm": 0.6994}, {"client_id": "C05", "program_period": "Not live", "policy_id": "P03", "avoidable_pmpm": 0.168}, {"client_id": "C05", "program_period": "Not live", "policy_id": "P04", "avoidable_pmpm": 0.1139}, {"client_id": "C05", "program_period": "Not live", "policy_id": "P05", "avoidable_pmpm": 1.0604}, {"client_id": "C05", "program_period": "Not live", "policy_id": "P06", "avoidable_pmpm": 0.7667}, {"client_id": "C05", "program_period": "Not live", "policy_id": "P07", "avoidable_pmpm": 1.3239}, {"client_id": "C06", "program_period": "Post go-live", "policy_id": "P01", "avoidable_pmpm": 0.1279}, {"client_id": "C06", "program_period": "Post go-live", "policy_id": "P02", "avoidable_pmpm": 0.178}, {"client_id": "C06", "program_period": "Post go-live", "policy_id": "P03", "avoidable_pmpm": 0.0198}, {"client_id": "C06", "program_period": "Post go-live", "policy_id": "P04", "avoidable_pmpm": 0.1413}, {"client_id": "C06", "program_period": "Post go-live", "policy_id": "P05", "avoidable_pmpm": 0.2507}, {"client_id": "C06", "program_period": "Post go-live", "policy_id": "P06", "avoidable_pmpm": 0.4068}, {"client_id": "C06", "program_period": "Post go-live", "policy_id": "P07", "avoidable_pmpm": 0.6158}, {"client_id": "C06", "program_period": "Pre go-live", "policy_id": "P01", "avoidable_pmpm": 0.2897}, {"client_id": "C06", "program_period": "Pre go-live", "policy_id": "P02", "avoidable_pmpm": 0.2164}, {"client_id": "C06", "program_period": "Pre go-live", "policy_id": "P03", "avoidable_pmpm": 0.0474}, {"client_id": "C06", "program_period": "Pre go-live", "policy_id": "P04", "avoidable_pmpm": 0.5001}, {"client_id": "C06", "program_period": "Pre go-live", "policy_id": "P05", "avoidable_pmpm": 0.4394}, {"client_id": "C06", "program_period": "Pre go-live", "policy_id": "P06", "avoidable_pmpm": 0.5583}, {"client_id": "C06", "program_period": "Pre go-live", "policy_id": "P07", "avoidable_pmpm": 1.0283}], "category_mix": [{"test_category": "Routine", "allowed": "6653544", "claims": 506788}, {"test_category": "Genetic & Molecular", "allowed": "5927080", "claims": 6533}, {"test_category": "Infectious Disease", "allowed": "3548838", "claims": 21399}, {"test_category": "Toxicology", "allowed": "3541504", "claims": 32498}, {"test_category": "Anatomic Pathology", "allowed": "844112", "claims": 11207}], "clients": [{"client_id": "C01", "client_name": "Suncoast Health Partners", "line_of_business": "Commercial", "go_live_date": "2025-01-01"}, {"client_id": "C02", "client_name": "Bayview Medicare Advantage", "line_of_business": "Medicare Advantage", "go_live_date": "2025-04-01"}, {"client_id": "C03", "client_name": "Heartland Community Care", "line_of_business": "Medicaid", "go_live_date": "2024-10-01"}, {"client_id": "C04", "client_name": "Pinecrest Employer Health", "line_of_business": "Commercial", "go_live_date": "2025-07-01"}, {"client_id": "C05", "client_name": "Lakeshore Senior Plan", "line_of_business": "Medicare Advantage", "go_live_date": null}, {"client_id": "C06", "client_name": "Prairie State Medicaid", "line_of_business": "Medicaid", "go_live_date": "2025-10-01"}], "contracts": [{"client_id": "C01", "fee_pmpm": 0.85, "guarantee_roi_multiple": 2.0, "fees_at_risk_pct": 0.25}, {"client_id": "C02", "fee_pmpm": 1.1, "guarantee_roi_multiple": 2.0, "fees_at_risk_pct": 0.3}, {"client_id": "C03", "fee_pmpm": 0.7, "guarantee_roi_multiple": 2.5, "fees_at_risk_pct": 0.25}, {"client_id": "C04", "fee_pmpm": 0.9, "guarantee_roi_multiple": 2.0, "fees_at_risk_pct": 0.2}, {"client_id": "C05", "fee_pmpm": null, "guarantee_roi_multiple": null, "fees_at_risk_pct": null}, {"client_id": "C06", "fee_pmpm": 0.7, "guarantee_roi_multiple": 2.0, "fees_at_risk_pct": 0.25}], "semantic_checks": ["[PASS] pmpm_by_client_2025: What was lab allowed PMPM by client in calendar 2025?", "[PASS] avoidable_by_policy_prospect: How much avoidable spend did Lakeshore Senior Plan have by policy in the last 12 months?", "[PASS] oon_share_pre_post: Did out-of-network share go down after go-live for each live client?", "[PASS] top_labs_avoidable: Which labs generate the most avoidable spend?", "[PASS] guardrail detects member-month double counting"]};
+const POLICY = {
+  P01: "Vitamin D screening without indication", P02: "HbA1c above frequency limit",
+  P03: "Same-day duplicate test", P04: "Definitive drug test without presumptive",
+  P05: "Full respiratory panel without indication", P06: "Genetic test without indication",
+  P07: "Out-of-network price above in-network"
+};
+const POL_SHORT = { P01: "Vitamin D", P02: "HbA1c freq.", P03: "Duplicate", P04: "Drug testing", P05: "Resp. panel", P06: "Genetic", P07: "Out-of-network" };
+const $ = s => document.querySelector(s);
+const fmt = {
+  usd: v => (Number(v) < 0 ? "−$" : "$") + Math.abs(Math.round(Number(v))).toLocaleString("en-US"),
+  usd2: v => "$" + Number(v).toFixed(2),
+  k: v => { v = Number(v); const s = v < 0 ? "−$" : "$"; v = Math.abs(v); return v >= 1e6 ? s + (v / 1e6).toFixed(2) + "M" : s + Math.round(v / 1e3).toLocaleString() + "K"; },
+  pct: (v, d = 1) => (Number(v) * 100).toFixed(d) + "%",
+  int: v => Number(v).toLocaleString("en-US"),
+  x: (v, d = 2) => (Number(v) < 0 ? "−" + Math.abs(Number(v)).toFixed(d) : Number(v).toFixed(d)) + "x"
+};
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const imp = DATA.program_impact, fc = DATA.forecast, pr = DATA.pricing, ov = DATA.overview;
+const clientsById = Object.fromEntries(DATA.clients.map(c => [c.client_id, c]));
+const scoreById = Object.fromEntries(imp.clients.map(c => [c.client_id, c]));
+let current = "C01";
+
+function table(el, head, rows, alignRight = []) {
+  el.innerHTML = "<thead><tr>" + head.map((h, i) => `<th class="${alignRight.includes(i) ? "r" : ""}">${h}</th>`).join("") +
+    "</tr></thead><tbody>" + rows.map(r => "<tr>" + r.map((c, i) => `<td class="${alignRight.includes(i) ? "r" : ""}">${c}</td>`).join("") + "</tr>").join("") + "</tbody>";
+}
+const pill = (cls, txt) => `<span class="pill ${cls}">${txt}</span>`;
+
+/* ---------- KPI band ---------- */
+(function () {
+  const items = [
+    [fmt.int(ov.members), "members across 6 health plans"],
+    [fmt.int(ov.raw_lines), "lab claim lines processed"],
+    [fmt.pct(ov.valid_rate, 2), "lines passing every quality check"],
+    [`${ov.recon_ok}/${ov.recon_total}`, "client-months tied to the Finance GL"],
+    [fmt.k(ov.avoidable_total), "avoidable spend found by policy engine"],
+    [fmt.k(imp.total_savings), "estimated program savings to date"]
+  ];
+  $("#kpis").innerHTML = items.map(([v, l]) => `<div class="kpi"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("");
+})();
+
+/* ---------- charts ---------- */
+Chart.defaults.font.family = "IBM Plex Sans, Arial, sans-serif";
+Chart.defaults.font.size = 12;
+const charts = {};
+function baseOpts(yFmt, extra = {}) {
+  const ink = css("--muted"), grid = css("--line");
+  return Object.assign({
+    responsive: true, maintainAspectRatio: false, animation: false,
+    interaction: { mode: "index", intersect: false },
+    plugins: { legend: { display: false }, tooltip: { backgroundColor: css("--ink"), titleColor: css("--surface"), bodyColor: css("--surface"),
+      callbacks: { label: c => c.raw == null ? null : ` ${c.dataset.label}: ${yFmt(c.raw.y ?? c.raw)}` } } },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: ink, maxRotation: 0, autoSkipPadding: 18 }, border: { color: grid } },
+      y: { grid: { color: grid }, border: { display: false }, ticks: { color: ink, callback: v => yFmt(v) } }
+    }
+  }, extra);
+}
+function monthLabel(m) { const [y, mo] = m.split("-"); return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+mo - 1] + " " + y.slice(2); }
+
+function drawPmpm() {
+  const s = imp.series[current] || [];
+  const live = !!scoreById[current];
+  const labels = s.map(r => monthLabel(r.m));
+  const c1 = css("--series-1"), ref = css("--series-ref"), surf = css("--surface");
+  const ds = [{ label: "Actual PMPM", data: s.map(r => r.actual), borderColor: c1, backgroundColor: c1, borderWidth: 2,
+                pointRadius: s.map((r, i) => i === s.length - 1 ? 4 : 0), pointBorderColor: surf, pointBorderWidth: 2, tension: .25 }];
+  if (live) ds.push({ label: "Expected without program", data: s.map(r => r.expected), borderColor: ref, borderDash: [5, 4],
+                      borderWidth: 2, pointRadius: 0, tension: .25, spanGaps: false });
+  const gl = clientsById[current].go_live_date;
+  const golive = gl ? labels.indexOf(monthLabel(gl.slice(0, 7))) : -1;
+  const marker = { id: "golive", afterDraw(ch) {
+      if (golive < 0) return; const x = ch.scales.x.getPixelForValue(golive), a = ch.chartArea, ctx = ch.ctx;
+      ctx.save(); ctx.strokeStyle = css("--faint"); ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(x, a.top); ctx.lineTo(x, a.bottom); ctx.stroke();
+      ctx.setLineDash([]); ctx.fillStyle = css("--muted"); ctx.font = "12px IBM Plex Sans, Arial"; ctx.fillText("Go-live", x + 5, a.top + 12); ctx.restore(); } };
+  charts.pmpm && charts.pmpm.destroy();
+  charts.pmpm = new Chart($("#pmpmChart"), { type: "line", data: { labels, datasets: ds }, options: baseOpts(fmt.usd2), plugins: [marker] });
+}
+
+function drawPolicy() {
+  const rows = DATA.policy_by_client.filter(r => r.client_id === current);
+  const pids = Object.keys(POLICY);
+  const live = !!scoreById[current];
+  const get = (per, p) => { const r = rows.find(x => x.program_period === per && x.policy_id === p); return r ? Number(r.avoidable_pmpm) : 0; };
+  const ref = css("--series-ref"), c1 = css("--series-1");
+  const ds = live
+    ? [{ label: "Before go-live", data: pids.map(p => get("Pre go-live", p)), backgroundColor: ref, borderRadius: 4, borderSkipped: "start", barPercentage: .8, categoryPercentage: .7 },
+       { label: "After go-live", data: pids.map(p => get("Post go-live", p)), backgroundColor: c1, borderRadius: 4, borderSkipped: "start", barPercentage: .8, categoryPercentage: .7 }]
+    : [{ label: "Avoidable PMPM (not live)", data: pids.map(p => get("Not live", p)), backgroundColor: ref, borderRadius: 4, borderSkipped: "start", barPercentage: .8, categoryPercentage: .7 }];
+  const o = baseOpts(fmt.usd2, { indexAxis: "y" });
+  o.interaction = { mode: "index", axis: "y", intersect: false };
+  o.scales = { x: { grid: { color: css("--line") }, border: { display: false }, ticks: { color: css("--muted"), callback: v => "$" + v.toFixed(2) } },
+               y: { grid: { display: false }, ticks: { color: css("--muted") }, border: { color: css("--line") } } };
+  o.plugins.tooltip.callbacks.title = items => POLICY[pids[items[0].dataIndex]];
+  charts.pol && charts.pol.destroy();
+  charts.pol = new Chart($("#polChart"), { type: "bar", data: { labels: pids.map(p => POL_SHORT[p]), datasets: ds }, options: o });
+  $("#polSub").textContent = live ? "$ PMPM, before vs. after go-live" : "$ PMPM, plan not live: this is the opportunity";
+  $("#polFoot").textContent = live && !rows.some(r => r.policy_id === "P02" && r.program_period === "Pre go-live")
+    ? "HbA1c has no before value: the plan went live before the rule's 12-month look-back was available (Jan 2025)." : "";
+}
+
+function drawForecast() {
+  const s = fc.series[current];
+  const months = [...s.hist.map(r => r.m), ...s.fcst.map(r => r.m)];
+  const labels = months.map(monthLabel);
+  const idx = Object.fromEntries(months.map((m, i) => [m, i]));
+  const arr = () => new Array(months.length).fill(null);
+  const hist = arr(), bt = arr(), f = arr(), lo = arr(), hi = arr();
+  s.hist.forEach(r => hist[idx[r.m]] = r.v);
+  s.backtest.forEach(r => bt[idx[r.m]] = r.v);
+  s.fcst.forEach(r => { f[idx[r.m]] = r.v; lo[idx[r.m]] = r.lo; hi[idx[r.m]] = r.hi; });
+  const last = s.hist[s.hist.length - 1]; f[idx[last.m]] = last.v; lo[idx[last.m]] = last.v; hi[idx[last.m]] = last.v;
+  const c1 = css("--series-1"), soft = css("--series-1-soft"), ref = css("--series-ref");
+  const ds = [
+    { label: "80% high", data: hi, borderWidth: 0, pointRadius: 0, fill: "+1", backgroundColor: soft },
+    { label: "80% low", data: lo, borderWidth: 0, pointRadius: 0, fill: false },
+    { label: "Actual", data: hist, borderColor: c1, borderWidth: 2, pointRadius: 0, tension: .25 },
+    { label: "Backtest", data: bt, borderColor: ref, borderDash: [5, 4], borderWidth: 2, pointRadius: 0, tension: .25 },
+    { label: "Forecast", data: f, borderColor: c1, borderDash: [2, 3], borderWidth: 2, pointRadius: 0, tension: .25 }
+  ];
+  const o = baseOpts(fmt.usd2);
+  o.plugins.tooltip.filter = i => !i.dataset.label.startsWith("80%") && i.raw != null;
+  charts.fc && charts.fc.destroy();
+  charts.fc = new Chart($("#fcChart"), { type: "line", data: { labels, datasets: ds }, options: o });
+  $("#fcTitle").textContent = `${clientsById[current].client_name}: PMPM history and forecast`;
+}
+
+/* ---------- dashboard ---------- */
+function renderDash() {
+  document.querySelectorAll("#clientButtons .seg").forEach(b => b.setAttribute("aria-pressed", b.dataset.id === current));
+  const c = clientsById[current], s = scoreById[current];
+  let k;
+  if (s) {
+    const status = s.guarantee_met ? pill("good", "Guarantee met") : pill("critical", "Guarantee missed");
+    k = [[fmt.usd2(s.expected_pmpm), "Expected PMPM (post go-live)"], [fmt.usd2(s.actual_pmpm), "Actual PMPM"],
+         [fmt.pct(s.savings_pct), `Savings (${fmt.pct(s.savings_pct_low)} to ${fmt.pct(s.savings_pct_high)})`],
+         [fmt.x(s.roi_multiple), `ROI on fees vs ${fmt.x(s.guarantee_multiple, 1)} guaranteed`], [status, s.fee_refund_due > 0 ? `Refund due ${fmt.usd(s.fee_refund_due)}` : "No refund due"]];
+  } else {
+    const p = pr.scenarios.base;
+    k = [[fmt.usd2(pr.baseline_pmpm), "Baseline PMPM (last 12 mo)"], [fmt.usd2(pr.avoidable_total), "Avoidable PMPM today"],
+         [fmt.pct(pr.avoidable_total / pr.baseline_pmpm), "Share of spend avoidable"], [fmt.usd2(p.savings_pmpm_y1), "Year-1 savings PMPM (base)"],
+         [pill("warn", "Prospect"), "Not live: see section 05"]];
+  }
+  $("#dashKpis").innerHTML = k.map(([v, l]) => `<div class="dk"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("");
+  $("#pmpmTitle").textContent = `${c.client_name}: lab allowed PMPM`;
+  $("#dashNote").innerHTML = NOTES[current];
+  drawPmpm(); drawPolicy(); drawForecast();
+}
+const NOTES = {"C01": "<b>Read-out:</b> savings of 15.8% against expected trend, 3.7x fees, guarantee met. Out-of-network share of spend fell from 22.4% to 9.3%. <b>Next:</b> genetic testing without indication is still $547 per 1,000 members a month; target the top ordering providers.", "C02": "<b>Read-out:</b> 8.9% savings and 2.00x fees, just under the 2.0x guarantee: refund of $385. A claims batch missing from the March 2026 extract (section 01) understates recent spend slightly, so re-run after the re-send before settling. <b>Next:</b> P07 out-of-network spend fell only 40%; steer toxicology to in-network labs.", "C03": "<b>Read-out:</b> longest-live plan, 20 months. Savings 15.8%, 2.9x fees against a higher 2.5x guarantee: met. Definitive drug testing without a presumptive screen is down 83%. <b>Next:</b> use as the Medicaid reference case in renewals.", "C04": "<b>Read-out:</b> no detectable savings after 11 months (-1.4%, inside the noise band) and the guarantee is missed, refund $9,792 (capped at fees at risk). Avoidable spend fell only 11%, against 40\u201355% at other plans. See the diagnosis below.", "PINECREST": "<b>Diagnosis: Pinecrest Employer Health.</b> The policies that drive savings elsewhere barely moved here: genetic tests without indication 4%, full respiratory panels 5%, vitamin D screening 25%, compared with 63%, 48% and 58% at Suncoast, the other Commercial plan. Out-of-network share is still 13.9%. That pattern points to implementation (policies not configured in the plan's claim edits, or no provider outreach) rather than a measurement problem. <b>Recommendation:</b> confirm the claim-edit configuration with the plan's operations team, launch outreach to the top ordering providers for genetic and respiratory testing, and re-measure at 6 months before the guarantee settles.", "C06": "<b>Read-out:</b> 8 months live, 10.6% savings (6.5% to 14.6%), ROI 1.96x, a hair under 2.0x. Early months include ramp-up, so a year-1 shortfall of $1,765 is likely to close. <b>Next:</b> track monthly; flag if ROI is below 1.5x at month 10.", "C05": "<b>Prospect:</b> 22% of Lakeshore's lab spend fails a policy today ($5.54 PMPM), the highest share in the book. Pricing is in section 05."};
+$("#clientButtons").innerHTML = DATA.clients.map(c => `<button class="seg" type="button" id="btn-${c.client_id}" data-id="${c.client_id}" aria-pressed="false">${c.client_name}<small>${c.line_of_business}${c.go_live_date ? " · live " + monthLabel(c.go_live_date.slice(0, 7)) : " · prospect"}</small></button>`).join("");
+$("#clientButtons").addEventListener("click", e => { const b = e.target.closest(".seg"); if (b) { current = b.dataset.id; renderDash(); } });
+
+/* ---------- static tables ---------- */
+const statusPill = s => s === "PASS" ? pill("good", "Pass") : s === "PASS_WITH_EXCEPTIONS" ? pill("warn", "Pass, rows quarantined") : pill("critical", "Fail");
+table($("#dqTable"), ["Check", "Severity", "Rows", "Status"],
+  DATA.dq_checks.map(r => [r.check_name.replaceAll("_", " "), r.severity, fmt.int(r.failing_rows), statusPill(r.status)]), [2]);
+const rx = DATA.recon_exceptions[0], gap = DATA.recon_gaps[0];
+table($("#reconTable"), ["Result", "Client-months", ""],
+  [["Reconciled (within $500 or 0.5%)", ov.recon_ok, pill("good", "Tied")],
+   ["Needs investigation", ov.recon_total - ov.recon_ok, pill("critical", "Investigate")]], [1]);
+$("#reconNote").innerHTML = `Exception: <b>${clientsById[rx.client_id].client_name}</b>, paid ${monthLabel(rx.paid_month.slice(0, 7))}. Claims ${fmt.usd(rx.claims_paid)} vs GL ${fmt.usd(rx.gl_paid)} (${fmt.usd(rx.variance)}, ${fmt.pct(rx.variance_pct)}). The batch drill-down shows weekly file <b>${gap.missing_week_batch}</b> never arrived, so the ask to the data vendor is a specific re-send, not a vague "numbers look off".`;
+$("#pipeResult").innerHTML = `${fmt.int(ov.raw_lines)} lines in; ${fmt.pct(ov.valid_rate, 2)} valid; every injected defect caught; ${ov.recon_ok} of ${ov.recon_total} client-months tie to the GL, and the one that does not is traced to a single missing weekly file.`;
+
+const polTot = DATA.policy_totals, avTot = polTot.reduce((a, r) => a + Number(r.avoidable), 0);
+table($("#polTable"), ["Policy", "Claims", "Avoidable $"], polTot.map(r => [`<b>${r.policy_id}</b> ${POLICY[r.policy_id]}`, fmt.int(r.claims), fmt.usd(r.avoidable)]), [1, 2]);
+$("#polResult").innerHTML = `${fmt.int(ov.flagged_claims)} claims (${fmt.pct(ov.flagged_claims / ov.payable_claims)}) failed a policy, carrying ${fmt.k(avTot)} of avoidable spend: ${fmt.pct(avTot / Number(ov.total_allowed))} of ${fmt.k(ov.total_allowed)} lab allowed.`;
+function drawPolTot() {
+  const sorted = [...polTot].sort((a, b) => b.avoidable - a.avoidable);
+  const o = baseOpts(fmt.k, { indexAxis: "y" });
+  o.interaction = { mode: "nearest", axis: "y", intersect: false };
+  o.scales = { x: { grid: { color: css("--line") }, border: { display: false }, ticks: { color: css("--muted"), callback: v => fmt.k(v) } },
+               y: { grid: { display: false }, ticks: { color: css("--muted") }, border: { color: css("--line") } } };
+  o.plugins.tooltip.callbacks.title = items => POLICY[sorted[items[0].dataIndex].policy_id];
+  charts.polTot && charts.polTot.destroy();
+  charts.polTot = new Chart($("#polTotalChart"), { type: "bar", data: { labels: sorted.map(r => POL_SHORT[r.policy_id]),
+    datasets: [{ label: "Avoidable allowed", data: sorted.map(r => Number(r.avoidable)), backgroundColor: css("--series-1"), borderRadius: 4, borderSkipped: "start", barPercentage: .7 }] }, options: o });
+}
+
+table($("#scoreTable"), ["Plan", "Live since", "Expected PMPM", "Actual PMPM", "Savings % (95% band)", "Savings $", "Fees $", "ROI", "Guarantee", "Refund"],
+  imp.clients.map(c => [`${c.client_name}<br><span class="muted small">${c.line_of_business}</span>`, `${monthLabel(c.go_live)}<br><span class="muted small">${c.post_months} months</span>`, fmt.usd2(c.expected_pmpm), fmt.usd2(c.actual_pmpm),
+    `${fmt.pct(c.savings_pct)} <span class="muted small">(${fmt.pct(c.savings_pct_low)} to ${fmt.pct(c.savings_pct_high)})</span>`, fmt.usd(c.gross_savings), fmt.usd(c.fees),
+    fmt.x(c.roi_multiple), c.guarantee_met ? pill("good", `Met (${fmt.x(c.guarantee_multiple, 1)})`) : pill("critical", `Missed (${fmt.x(c.guarantee_multiple, 1)})`), c.fee_refund_due > 0 ? fmt.usd(c.fee_refund_due) : "–"]),
+  [2, 3, 5, 6, 7, 9]);
+$("#impResult").innerHTML = `${fmt.k(imp.total_savings)} estimated savings on ${fmt.k(imp.total_fees)} of fees: ${fmt.x(imp.portfolio_roi, 1)} portfolio ROI. Two plans clear their guarantee; three are short, with ${fmt.usd(imp.clients.reduce((a, c) => a + c.fee_refund_due, 0))} in fee refunds due.`;
+$("#impChecks").innerHTML = [
+  `<b>Placebo outcome:</b> core panels (CMP, CBC, lipid, TSH, UA) are not targeted by any policy; their utilization moved ${fmt.pct(imp.placebo_core_util_effect)}, close to zero as it should be.`,
+  `<b>Placebo in time:</b> pretending go-live happened 6 months early gives a ${fmt.pct(imp.placebo_in_time_effect)} "effect". That is the noise floor at plan level, so results inside about ±4% are not conclusive.`,
+  `<b>Bottom-up cross-check:</b> drop in policy-avoidable PMPM explains most of the top-down savings (${fmt.k(imp.clients.reduce((a, c) => a + c.bottom_up_savings, 0))} vs ${fmt.k(imp.total_savings)}).`,
+  `<b>Rejected alternative:</b> plan-specific trends over-extrapolated from short pre-periods and made both placebos worse, so they stay out of the headline.`
+].map(t => `<li>${t}</li>`).join("");
+table($("#cfTable"), ["Service month", "Months paid", "% complete", "Factor"],
+  DATA.completion_factors.recent.map(r => [monthLabel(r.month), r.dev, fmt.pct(r.pct_complete), r.cf.toFixed(3)]), [1, 2, 3]);
+$("#pinecrestNote").innerHTML = NOTES.PINECREST;
+
+const bt = fc.backtest;
+table($("#btTable"), ["Plan", "MAPE model", "MAPE naive", "Spend bias"],
+  bt.map(r => [r.client_name, fmt.pct(r.mape_model), fmt.pct(r.mape_naive), (r.bias_model > 0 ? "+" : "") + fmt.pct(r.bias_model)]), [1, 2, 3]);
+table($("#y27Table"), ["Plan", "2027 PMPM", "2027 allowed", "80% range"],
+  fc.y2027.map(r => [r.client_name, fmt.usd2(r.pmpm_2027), fmt.k(r.spend_2027), `${fmt.k(r.spend_2027_lo)} – ${fmt.k(r.spend_2027_hi)}`]), [1, 2, 3]);
+const better = bt.filter(r => r.mape_model < r.mape_naive - 0.005).length;
+$("#fcResult").innerHTML = `Portfolio spend for Jan–May 2026 forecast within ${fmt.pct(Math.abs(fc.portfolio_backtest_error_model))} (seasonal-naive: ${fmt.pct(Math.abs(fc.portfolio_backtest_error_naive))}). Lower error than naive for ${better} of 6 plans. Underlying trend ${fmt.pct(fc.underlying_trend)} a year, led by genomic testing.`;
+
+const capBy = Object.fromEntries(pr.capture.map(r => [r.policy_id, r]));
+table($("#prPolicyTable"), ["Policy", "Avoidable PMPM", "Capture low / base / high"],
+  Object.keys(POLICY).map(p => [`<b>${p}</b> ${POL_SHORT[p]}`, fmt.usd2(pr.avoidable[p] || 0),
+    `${fmt.pct(Math.max(0, capBy[p].capture_min), 0)} / <b>${fmt.pct(capBy[p].capture_ma_peer, 0)}</b> / ${fmt.pct(capBy[p].capture_max, 0)}`]), [1, 2]);
+const S = pr.scenarios;
+table($("#prScenTable"), ["Contract year 2027", "Low", "Base", "High"], [
+  ["Year-1 savings PMPM", fmt.usd2(S.low.savings_pmpm_y1), fmt.usd2(S.base.savings_pmpm_y1), fmt.usd2(S.high.savings_pmpm_y1)],
+  ["Gross savings", fmt.k(S.low.gross_savings), fmt.k(S.base.gross_savings), fmt.k(S.high.gross_savings)],
+  ["% of projected lab spend", fmt.pct(S.low.pct_of_spend), fmt.pct(S.base.pct_of_spend), fmt.pct(S.high.pct_of_spend)],
+  ["Break-even fee PMPM at 2.0x", fmt.usd2(S.low.breakeven_fee_pmpm), fmt.usd2(S.base.breakeven_fee_pmpm), fmt.usd2(S.high.breakeven_fee_pmpm)],
+  ["A. $1.00 fixed fee: client ROI", fmt.x(S.low.fixed_fee_roi), fmt.x(S.base.fixed_fee_roi), fmt.x(S.high.fixed_fee_roi)],
+  ["C. Hybrid $0.60 + 15%: client ROI", fmt.x(S.low.hybrid_roi), fmt.x(S.base.hybrid_roi), fmt.x(S.high.hybrid_roi)],
+  ["C. Hybrid: refund owed", S.low.hybrid_refund > 0 ? fmt.k(S.low.hybrid_refund) : "–", S.base.hybrid_refund > 0 ? fmt.k(S.base.hybrid_refund) : "–", S.high.hybrid_refund > 0 ? fmt.k(S.high.hybrid_refund) : "–"]
+], [1, 2, 3]);
+$("#prResult").innerHTML = `Base case: ${fmt.usd2(S.base.savings_pmpm_y1)} PMPM in year 1 (${fmt.pct(S.base.pct_of_spend)} of lab spend). Recommend the hybrid: the plan clears 2.0x in base and high cases, and in the low case the refund caps our downside at ${fmt.pct(0.25, 0)} of fees.`;
+
+$("#semChecks").innerHTML = DATA.semantic_checks.map(l => {
+  const ok = l.startsWith("[PASS]"); const t = l.replace(/^\[(PASS|FAIL)\]\s*/, "").replace(/^[a-z0-9_]+: /, "");
+  return `<li>${pill(ok ? "good" : "critical", ok ? "Pass" : "Fail")} ${t}</li>`; }).join("");
+
+const redrawAll = () => { renderDash(); drawPolTot(); };
+redrawAll();
+try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", redrawAll); } catch (e) {}
+new MutationObserver(redrawAll).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+</script>
+</body>
+</html>
