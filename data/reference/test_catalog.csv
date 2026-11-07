@@ -1,0 +1,25 @@
+cpt_code,test_description,test_category,in_network_rate,policy_group
+80053,Comprehensive metabolic panel,Routine,11.0,
+85025,Complete blood count w/ differential,Routine,8.0,
+80061,Lipid panel,Routine,15.0,
+83036,Hemoglobin A1c,Routine,11.0,P02_HBA1C_FREQ
+84443,Thyroid stimulating hormone,Routine,19.0,
+82306,"Vitamin D, 25-hydroxy",Routine,33.0,P01_VITD_SCREEN
+84153,"Prostate specific antigen, total",Routine,20.0,
+81001,"Urinalysis, automated w/ microscopy",Routine,4.0,
+87086,"Urine culture, colony count",Routine,9.0,
+88305,"Surgical pathology, level IV",Anatomic Pathology,70.0,
+87798,"Infectious agent, amplified probe NOS",Infectious Disease,35.0,
+87633,"Respiratory pathogen panel, 12-25 targets",Infectious Disease,416.0,P05_RESP_PANEL
+87637,SARS-CoV-2 + influenza A/B + RSV,Infectious Disease,142.0,
+80307,"Drug screen, presumptive (instrument)",Toxicology,62.0,
+G0480,"Drug test, definitive, 1-7 classes",Toxicology,114.0,
+G0483,"Drug test, definitive, 22+ classes",Toxicology,246.0,P04_DEF_DRUG
+81528,"Colorectal cancer screening, mt-sDNA",Genetic & Molecular,509.0,P06_GENETIC_INDICATION
+81420,Fetal aneuploidy (NIPT),Genetic & Molecular,600.0,P06_GENETIC_INDICATION
+81162,BRCA1/BRCA2 full sequence + dup/del,Genetic & Molecular,1800.0,P06_GENETIC_INDICATION
+81519,"Oncology, breast, 21-gene expression",Genetic & Molecular,3873.0,P06_GENETIC_INDICATION
+0037U,"Targeted genomic sequence, solid tumor (CGP)",Genetic & Molecular,3500.0,P06_GENETIC_INDICATION
+81445,"Targeted genomic panel, solid tumor 5-50 genes",Genetic & Molecular,597.0,P06_GENETIC_INDICATION
+81225,CYP2C19 pharmacogenomic,Genetic & Molecular,292.0,P06_GENETIC_INDICATION
+81479,Unlisted molecular pathology,Genetic & Molecular,900.0,P06_GENETIC_INDICATION

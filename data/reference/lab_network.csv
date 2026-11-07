@@ -1,0 +1,13 @@
+lab_id,lab_name,lab_type,in_network
+L001,Meridian Reference Laboratories,National reference,True
+L002,Coastal Diagnostics Network,National reference,True
+L003,St. Brendan Hospital Outreach Lab,Hospital outreach,True
+L004,Valley Regional Medical Center Lab,Hospital outreach,True
+L005,Northgate Health System Lab,Hospital outreach,True
+L006,Keystone Clinical Labs,Regional independent,True
+L007,Bluewater Pathology Associates,Regional independent,True
+L008,Helix Precision Genomics,Genetic specialty,True
+L009,Apex Molecular Insights,Genetic specialty,False
+L010,GenoPath Advanced Testing,Genetic specialty,False
+L011,ClearScreen Toxicology,Toxicology,False
+L012,Rapid Results Independent Lab,Regional independent,False

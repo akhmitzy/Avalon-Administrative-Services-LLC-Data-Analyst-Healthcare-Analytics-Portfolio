@@ -1,0 +1,21 @@
+icd10_code,icd10_description,clinical_category
+Z00.00,General adult exam,screening
+Z13.21,Screening for nutritional disorder,screening
+Z12.11,Screening for malignant neoplasm of colon,crc_screening
+E55.9,"Vitamin D deficiency, unspecified",vitd_deficiency
+M81.0,Age-related osteoporosis,vitd_deficiency
+E11.9,Type 2 diabetes without complications,diabetes
+R73.03,Prediabetes,prediabetes
+N18.30,"Chronic kidney disease, stage 3",ckd
+Z34.90,Supervision of normal pregnancy,pregnancy
+C50.911,Malignant neoplasm of right female breast,oncology
+C34.90,"Malignant neoplasm of lung, unspecified",oncology
+Z80.3,Family history of breast cancer,family_history_cancer
+F11.20,"Opioid dependence, uncomplicated",substance_use
+Z79.891,Long-term use of opiate analgesic,substance_use
+J06.9,Acute upper respiratory infection,respiratory_infection
+D84.9,"Immunodeficiency, unspecified",immunocompromised
+N39.0,Urinary tract infection,uti
+I25.10,Atherosclerotic heart disease,cardiovascular
+F32.A,"Depression, unspecified",behavioral
+R53.83,Other fatigue,general
