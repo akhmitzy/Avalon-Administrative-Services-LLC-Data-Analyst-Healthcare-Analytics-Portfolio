@@ -1,0 +1,122 @@
+{
+ "members": 4228,
+ "baseline_pmpm": 25.0986359221169,
+ "trend": 0.06475682600229016,
+ "avoidable": {
+  "P01": 0.9954908853039166,
+  "P02": 0.699721373868457,
+  "P03": 0.15940212523067923,
+  "P04": 0.13306641997567037,
+  "P05": 1.0337256124228573,
+  "P06": 0.9403664949916479,
+  "P07": 1.5738112867761869
+ },
+ "avoidable_total": 5.535584198569415,
+ "capture": [
+  {
+   "policy_id": "P01",
+   "pre_pmpm": 0.5396,
+   "post_pmpm": 0.2532,
+   "capture_rate": 0.5423,
+   "capture_min": 0.2374,
+   "capture_max": 0.5861,
+   "capture_ma_peer": 0.5433,
+   "clients_used": 5
+  },
+  {
+   "policy_id": "P02",
+   "pre_pmpm": 0.4403,
+   "post_pmpm": 0.3364,
+   "capture_rate": 0.2029,
+   "capture_min": 0.1258,
+   "capture_max": 0.2761,
+   "capture_ma_peer": 0.2761,
+   "clients_used": 3
+  },
+  {
+   "policy_id": "P03",
+   "pre_pmpm": 0.0811,
+   "post_pmpm": 0.035,
+   "capture_rate": 0.582,
+   "capture_min": 0.3683,
+   "capture_max": 0.6418,
+   "capture_ma_peer": 0.5709,
+   "clients_used": 5
+  },
+  {
+   "policy_id": "P04",
+   "pre_pmpm": 0.3908,
+   "post_pmpm": 0.0747,
+   "capture_rate": 0.7951,
+   "capture_min": 0.6334,
+   "capture_max": 0.8706,
+   "capture_ma_peer": 0.7157,
+   "clients_used": 5
+  },
+  {
+   "policy_id": "P05",
+   "pre_pmpm": 0.6284,
+   "post_pmpm": 0.3311,
+   "capture_rate": 0.4607,
+   "capture_min": 0.0453,
+   "capture_max": 0.6232,
+   "capture_ma_peer": 0.6232,
+   "clients_used": 5
+  },
+  {
+   "policy_id": "P06",
+   "pre_pmpm": 0.8851,
+   "post_pmpm": 0.4209,
+   "capture_rate": 0.5337,
+   "capture_min": 0.0355,
+   "capture_max": 0.7076,
+   "capture_ma_peer": 0.4152,
+   "clients_used": 5
+  },
+  {
+   "policy_id": "P07",
+   "pre_pmpm": 1.2463,
+   "post_pmpm": 0.6714,
+   "capture_rate": 0.4601,
+   "capture_min": 0.1624,
+   "capture_max": 0.5503,
+   "capture_ma_peer": 0.3896,
+   "clients_used": 5
+  }
+ ],
+ "scenarios": {
+  "low": {
+   "savings_pmpm_y1": 0.7059702093179477,
+   "gross_savings": 35818.1045399554,
+   "pct_of_spend": 0.02560121676387405,
+   "breakeven_fee_pmpm": 0.35298510465897387,
+   "fixed_fee_roi": 0.7059702093179477,
+   "shared_fees": 12536.336588984388,
+   "hybrid_net_fees": 26860.736760744978,
+   "hybrid_roi": 1.333474388993714,
+   "hybrid_refund": 8953.578920248327
+  },
+  "base": {
+   "savings_pmpm_y1": 2.2572831328283254,
+   "gross_savings": 114525.5170271779,
+   "pct_of_spend": 0.08185783765126008,
+   "breakeven_fee_pmpm": 1.1286415664141627,
+   "fixed_fee_roi": 2.2572831328283254,
+   "shared_fees": 40083.93095951226,
+   "hybrid_net_fees": 47620.42755407668,
+   "hybrid_roi": 2.404966164932587,
+   "hybrid_refund": 0
+  },
+  "high": {
+   "savings_pmpm_y1": 2.7866952205789834,
+   "gross_savings": 141385.7687112953,
+   "pct_of_spend": 0.10105637242939769,
+   "breakeven_fee_pmpm": 1.3933476102894917,
+   "fixed_fee_roi": 2.7866952205789834,
+   "shared_fees": 49485.01904895335,
+   "hybrid_net_fees": 51649.46530669429,
+   "hybrid_roi": 2.737410113962405,
+   "hybrid_refund": 0
+  }
+ }
+}

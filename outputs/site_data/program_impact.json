@@ -1,0 +1,1265 @@
+{
+ "total_savings": 1254934.8397506794,
+ "total_fees": 491388.69999999995,
+ "portfolio_roi": 2.5538536798886087,
+ "placebo_in_time_effect": -0.03506768350343603,
+ "placebo_core_util_effect": 0.004574198124951856,
+ "resid_sd": 0.05856003318320204,
+ "clients": [
+  {
+   "client_id": "C01",
+   "client_name": "Suncoast Health Partners",
+   "line_of_business": "Commercial",
+   "go_live": "2025-01",
+   "post_months": 17,
+   "post_member_months": 166250,
+   "expected_pmpm": 19.7797,
+   "actual_pmpm": 16.6466,
+   "savings_pmpm": 3.133,
+   "savings_pct": 0.1584,
+   "savings_pct_low": 0.1306,
+   "savings_pct_high": 0.1862,
+   "gross_savings": 520867.8258,
+   "fees": 141312.5,
+   "roi_multiple": 3.6859,
+   "guarantee_multiple": 2.0,
+   "guarantee_met": true,
+   "fee_refund_due": 0.0,
+   "avoidable_pmpm_pre": 4.6627,
+   "avoidable_pmpm_post": 2.1062,
+   "bottom_up_savings": 425009.9854,
+   "oon_share_pre": 0.2244,
+   "oon_share_post": 0.0928
+  },
+  {
+   "client_id": "C02",
+   "client_name": "Bayview Medicare Advantage",
+   "line_of_business": "Medicare Advantage",
+   "go_live": "2025-04",
+   "post_months": 14,
+   "post_member_months": 91662,
+   "expected_pmpm": 24.5708,
+   "actual_pmpm": 22.375,
+   "savings_pmpm": 2.1958,
+   "savings_pct": 0.0894,
+   "savings_pct_low": 0.0587,
+   "savings_pct_high": 0.12,
+   "gross_savings": 201271.2031,
+   "fees": 100828.2,
+   "roi_multiple": 1.9962,
+   "guarantee_multiple": 2.0,
+   "guarantee_met": false,
+   "fee_refund_due": 385.1969,
+   "avoidable_pmpm_pre": 4.92,
+   "avoidable_pmpm_post": 2.9033,
+   "bottom_up_savings": 184852.6166,
+   "oon_share_pre": 0.1657,
+   "oon_share_post": 0.1054
+  },
+  {
+   "client_id": "C03",
+   "client_name": "Heartland Community Care",
+   "line_of_business": "Medicaid",
+   "go_live": "2024-10",
+   "post_months": 20,
+   "post_member_months": 226385,
+   "expected_pmpm": 12.9595,
+   "actual_pmpm": 10.9054,
+   "savings_pmpm": 2.0542,
+   "savings_pct": 0.1585,
+   "savings_pct_low": 0.1328,
+   "savings_pct_high": 0.1842,
+   "gross_savings": 465034.7336,
+   "fees": 158469.5,
+   "roi_multiple": 2.9345,
+   "guarantee_multiple": 2.5,
+   "guarantee_met": true,
+   "fee_refund_due": 0.0,
+   "avoidable_pmpm_pre": 2.909,
+   "avoidable_pmpm_post": 1.2466,
+   "bottom_up_savings": 376351.4364,
+   "oon_share_pre": 0.2572,
+   "oon_share_post": 0.1113
+  },
+  {
+   "client_id": "C04",
+   "client_name": "Pinecrest Employer Health",
+   "line_of_business": "Commercial",
+   "go_live": "2025-07",
+   "post_months": 11,
+   "post_member_months": 54399,
+   "expected_pmpm": 18.1132,
+   "actual_pmpm": 18.3726,
+   "savings_pmpm": -0.2594,
+   "savings_pct": -0.0143,
+   "savings_pct_low": -0.0489,
+   "savings_pct_high": 0.0203,
+   "gross_savings": -14112.6395,
+   "fees": 48959.1,
+   "roi_multiple": -0.2883,
+   "guarantee_multiple": 2.0,
+   "guarantee_met": false,
+   "fee_refund_due": 9791.82,
+   "avoidable_pmpm_pre": 4.0294,
+   "avoidable_pmpm_post": 3.5785,
+   "bottom_up_savings": 24529.2799,
+   "oon_share_pre": 0.1947,
+   "oon_share_post": 0.1387
+  },
+  {
+   "client_id": "C06",
+   "client_name": "Prairie State Medicaid",
+   "line_of_business": "Medicaid",
+   "go_live": "2025-10",
+   "post_months": 8,
+   "post_member_months": 59742,
+   "expected_pmpm": 12.9405,
+   "actual_pmpm": 11.5701,
+   "savings_pmpm": 1.3705,
+   "savings_pct": 0.1059,
+   "savings_pct_low": 0.0653,
+   "savings_pct_high": 0.1465,
+   "gross_savings": 81873.7168,
+   "fees": 41819.4,
+   "roi_multiple": 1.9578,
+   "guarantee_multiple": 2.0,
+   "guarantee_met": false,
+   "fee_refund_due": 1765.0832,
+   "avoidable_pmpm_pre": 2.9588,
+   "avoidable_pmpm_post": 1.7755,
+   "bottom_up_savings": 70693.463,
+   "oon_share_pre": 0.2583,
+   "oon_share_post": 0.1388
+  }
+ ],
+ "capture": [
+  {
+   "policy_id": "P01",
+   "pre_pmpm": 0.5396,
+   "post_pmpm": 0.2532,
+   "capture_rate": 0.5423,
+   "capture_min": 0.2374,
+   "capture_max": 0.5861,
+   "capture_ma_peer": 0.5433,
+   "clients_used": 5
+  },
+  {
+   "policy_id": "P02",
+   "pre_pmpm": 0.4403,
+   "post_pmpm": 0.3364,
+   "capture_rate": 0.2029,
+   "capture_min": 0.1258,
+   "capture_max": 0.2761,
+   "capture_ma_peer": 0.2761,
+   "clients_used": 3
+  },
+  {
+   "policy_id": "P03",
+   "pre_pmpm": 0.0811,
+   "post_pmpm": 0.035,
+   "capture_rate": 0.582,
+   "capture_min": 0.3683,
+   "capture_max": 0.6418,
+   "capture_ma_peer": 0.5709,
+   "clients_used": 5
+  },
+  {
+   "policy_id": "P04",
+   "pre_pmpm": 0.3908,
+   "post_pmpm": 0.0747,
+   "capture_rate": 0.7951,
+   "capture_min": 0.6334,
+   "capture_max": 0.8706,
+   "capture_ma_peer": 0.7157,
+   "clients_used": 5
+  },
+  {
+   "policy_id": "P05",
+   "pre_pmpm": 0.6284,
+   "post_pmpm": 0.3311,
+   "capture_rate": 0.4607,
+   "capture_min": 0.0453,
+   "capture_max": 0.6232,
+   "capture_ma_peer": 0.6232,
+   "clients_used": 5
+  },
+  {
+   "policy_id": "P06",
+   "pre_pmpm": 0.8851,
+   "post_pmpm": 0.4209,
+   "capture_rate": 0.5337,
+   "capture_min": 0.0355,
+   "capture_max": 0.7076,
+   "capture_ma_peer": 0.4152,
+   "clients_used": 5
+  },
+  {
+   "policy_id": "P07",
+   "pre_pmpm": 1.2463,
+   "post_pmpm": 0.6714,
+   "capture_rate": 0.4601,
+   "capture_min": 0.1624,
+   "capture_max": 0.5503,
+   "capture_ma_peer": 0.3896,
+   "clients_used": 5
+  }
+ ],
+ "series": {
+  "C01": [
+   {
+    "m": "2024-01",
+    "actual": 22.766,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-02",
+    "actual": 19.302,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-03",
+    "actual": 18.222,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-04",
+    "actual": 16.542,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-05",
+    "actual": 18.279,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-06",
+    "actual": 15.758,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-07",
+    "actual": 16.391,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-08",
+    "actual": 17.712,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-09",
+    "actual": 17.69,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-10",
+    "actual": 21.179,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-11",
+    "actual": 19.389,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-12",
+    "actual": 20.95,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-01",
+    "actual": 20.639,
+    "expected": 22.655,
+    "post": true
+   },
+   {
+    "m": "2025-02",
+    "actual": 18.938,
+    "expected": 21.809,
+    "post": true
+   },
+   {
+    "m": "2025-03",
+    "actual": 16.687,
+    "expected": 19.355,
+    "post": true
+   },
+   {
+    "m": "2025-04",
+    "actual": 14.74,
+    "expected": 18.607,
+    "post": true
+   },
+   {
+    "m": "2025-05",
+    "actual": 13.409,
+    "expected": 17.36,
+    "post": true
+   },
+   {
+    "m": "2025-06",
+    "actual": 14.168,
+    "expected": 17.844,
+    "post": true
+   },
+   {
+    "m": "2025-07",
+    "actual": 13.707,
+    "expected": 18.045,
+    "post": true
+   },
+   {
+    "m": "2025-08",
+    "actual": 13.181,
+    "expected": 15.944,
+    "post": true
+   },
+   {
+    "m": "2025-09",
+    "actual": 15.142,
+    "expected": 21.268,
+    "post": true
+   },
+   {
+    "m": "2025-10",
+    "actual": 17.042,
+    "expected": 18.208,
+    "post": true
+   },
+   {
+    "m": "2025-11",
+    "actual": 17.77,
+    "expected": 22.026,
+    "post": true
+   },
+   {
+    "m": "2025-12",
+    "actual": 16.743,
+    "expected": 21.624,
+    "post": true
+   },
+   {
+    "m": "2026-01",
+    "actual": 22.34,
+    "expected": 22.268,
+    "post": true
+   },
+   {
+    "m": "2026-02",
+    "actual": 18.35,
+    "expected": 19.592,
+    "post": true
+   },
+   {
+    "m": "2026-03",
+    "actual": 18.472,
+    "expected": 21.262,
+    "post": true
+   },
+   {
+    "m": "2026-04",
+    "actual": 16.074,
+    "expected": 18.006,
+    "post": true
+   },
+   {
+    "m": "2026-05",
+    "actual": 15.511,
+    "expected": 20.34,
+    "post": true
+   }
+  ],
+  "C02": [
+   {
+    "m": "2024-01",
+    "actual": 28.829,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-02",
+    "actual": 27.306,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-03",
+    "actual": 26.29,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-04",
+    "actual": 21.591,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-05",
+    "actual": 19.718,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-06",
+    "actual": 19.153,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-07",
+    "actual": 21.749,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-08",
+    "actual": 21.045,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-09",
+    "actual": 22.209,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-10",
+    "actual": 24.514,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-11",
+    "actual": 24.782,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-12",
+    "actual": 27.315,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-01",
+    "actual": 27.977,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-02",
+    "actual": 26.863,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-03",
+    "actual": 24.845,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-04",
+    "actual": 21.952,
+    "expected": 23.477,
+    "post": true
+   },
+   {
+    "m": "2025-05",
+    "actual": 17.885,
+    "expected": 21.903,
+    "post": true
+   },
+   {
+    "m": "2025-06",
+    "actual": 20.678,
+    "expected": 22.514,
+    "post": true
+   },
+   {
+    "m": "2025-07",
+    "actual": 18.311,
+    "expected": 22.768,
+    "post": true
+   },
+   {
+    "m": "2025-08",
+    "actual": 20.202,
+    "expected": 20.117,
+    "post": true
+   },
+   {
+    "m": "2025-09",
+    "actual": 19.71,
+    "expected": 26.834,
+    "post": true
+   },
+   {
+    "m": "2025-10",
+    "actual": 24.284,
+    "expected": 22.974,
+    "post": true
+   },
+   {
+    "m": "2025-11",
+    "actual": 24.745,
+    "expected": 27.791,
+    "post": true
+   },
+   {
+    "m": "2025-12",
+    "actual": 25.931,
+    "expected": 27.283,
+    "post": true
+   },
+   {
+    "m": "2026-01",
+    "actual": 26.456,
+    "expected": 28.096,
+    "post": true
+   },
+   {
+    "m": "2026-02",
+    "actual": 23.796,
+    "expected": 24.719,
+    "post": true
+   },
+   {
+    "m": "2026-03",
+    "actual": 25.001,
+    "expected": 26.826,
+    "post": true
+   },
+   {
+    "m": "2026-04",
+    "actual": 24.591,
+    "expected": 22.719,
+    "post": true
+   },
+   {
+    "m": "2026-05",
+    "actual": 19.33,
+    "expected": 25.664,
+    "post": true
+   }
+  ],
+  "C03": [
+   {
+    "m": "2024-01",
+    "actual": 15.446,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-02",
+    "actual": 13.032,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-03",
+    "actual": 12.685,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-04",
+    "actual": 11.33,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-05",
+    "actual": 11.597,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-06",
+    "actual": 10.512,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-07",
+    "actual": 9.621,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-08",
+    "actual": 11.161,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-09",
+    "actual": 12.2,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-10",
+    "actual": 10.09,
+    "expected": 12.605,
+    "post": true
+   },
+   {
+    "m": "2024-11",
+    "actual": 9.796,
+    "expected": 13.106,
+    "post": true
+   },
+   {
+    "m": "2024-12",
+    "actual": 10.357,
+    "expected": 13.591,
+    "post": true
+   },
+   {
+    "m": "2025-01",
+    "actual": 12.514,
+    "expected": 14.816,
+    "post": true
+   },
+   {
+    "m": "2025-02",
+    "actual": 12.005,
+    "expected": 14.262,
+    "post": true
+   },
+   {
+    "m": "2025-03",
+    "actual": 10.566,
+    "expected": 12.657,
+    "post": true
+   },
+   {
+    "m": "2025-04",
+    "actual": 11.393,
+    "expected": 12.168,
+    "post": true
+   },
+   {
+    "m": "2025-05",
+    "actual": 9.064,
+    "expected": 11.352,
+    "post": true
+   },
+   {
+    "m": "2025-06",
+    "actual": 9.191,
+    "expected": 11.669,
+    "post": true
+   },
+   {
+    "m": "2025-07",
+    "actual": 8.565,
+    "expected": 11.801,
+    "post": true
+   },
+   {
+    "m": "2025-08",
+    "actual": 10.313,
+    "expected": 10.426,
+    "post": true
+   },
+   {
+    "m": "2025-09",
+    "actual": 9.601,
+    "expected": 13.908,
+    "post": true
+   },
+   {
+    "m": "2025-10",
+    "actual": 11.686,
+    "expected": 11.907,
+    "post": true
+   },
+   {
+    "m": "2025-11",
+    "actual": 10.99,
+    "expected": 14.404,
+    "post": true
+   },
+   {
+    "m": "2025-12",
+    "actual": 11.842,
+    "expected": 14.141,
+    "post": true
+   },
+   {
+    "m": "2026-01",
+    "actual": 14.02,
+    "expected": 14.562,
+    "post": true
+   },
+   {
+    "m": "2026-02",
+    "actual": 12.879,
+    "expected": 12.812,
+    "post": true
+   },
+   {
+    "m": "2026-03",
+    "actual": 11.462,
+    "expected": 13.904,
+    "post": true
+   },
+   {
+    "m": "2026-04",
+    "actual": 11.47,
+    "expected": 11.775,
+    "post": true
+   },
+   {
+    "m": "2026-05",
+    "actual": 10.107,
+    "expected": 13.302,
+    "post": true
+   }
+  ],
+  "C04": [
+   {
+    "m": "2024-01",
+    "actual": 22.242,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-02",
+    "actual": 17.848,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-03",
+    "actual": 16.353,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-04",
+    "actual": 17.377,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-05",
+    "actual": 15.124,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-06",
+    "actual": 14.975,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-07",
+    "actual": 13.738,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-08",
+    "actual": 14.943,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-09",
+    "actual": 15.266,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-10",
+    "actual": 14.226,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-11",
+    "actual": 17.962,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-12",
+    "actual": 20.231,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-01",
+    "actual": 23.805,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-02",
+    "actual": 22.889,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-03",
+    "actual": 16.14,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-04",
+    "actual": 17.013,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-05",
+    "actual": 15.778,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-06",
+    "actual": 17.737,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-07",
+    "actual": 15.571,
+    "expected": 16.44,
+    "post": true
+   },
+   {
+    "m": "2025-08",
+    "actual": 17.035,
+    "expected": 14.526,
+    "post": true
+   },
+   {
+    "m": "2025-09",
+    "actual": 17.221,
+    "expected": 19.376,
+    "post": true
+   },
+   {
+    "m": "2025-10",
+    "actual": 19.34,
+    "expected": 16.589,
+    "post": true
+   },
+   {
+    "m": "2025-11",
+    "actual": 16.573,
+    "expected": 20.067,
+    "post": true
+   },
+   {
+    "m": "2025-12",
+    "actual": 19.001,
+    "expected": 19.701,
+    "post": true
+   },
+   {
+    "m": "2026-01",
+    "actual": 22.349,
+    "expected": 20.288,
+    "post": true
+   },
+   {
+    "m": "2026-02",
+    "actual": 20.765,
+    "expected": 17.85,
+    "post": true
+   },
+   {
+    "m": "2026-03",
+    "actual": 20.649,
+    "expected": 19.371,
+    "post": true
+   },
+   {
+    "m": "2026-04",
+    "actual": 18.758,
+    "expected": 16.405,
+    "post": true
+   },
+   {
+    "m": "2026-05",
+    "actual": 14.712,
+    "expected": 18.532,
+    "post": true
+   }
+  ],
+  "C05": [
+   {
+    "m": "2024-01",
+    "actual": 28.108,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-02",
+    "actual": 26.059,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-03",
+    "actual": 23.127,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-04",
+    "actual": 25.09,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-05",
+    "actual": 17.384,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-06",
+    "actual": 19.377,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-07",
+    "actual": 23.344,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-08",
+    "actual": 20.276,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-09",
+    "actual": 25.022,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-10",
+    "actual": 24.278,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-11",
+    "actual": 27.094,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-12",
+    "actual": 27.493,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-01",
+    "actual": 25.205,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-02",
+    "actual": 28.05,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-03",
+    "actual": 24.439,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-04",
+    "actual": 23.803,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-05",
+    "actual": 21.112,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-06",
+    "actual": 22.775,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-07",
+    "actual": 24.731,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-08",
+    "actual": 21.905,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-09",
+    "actual": 24.776,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-10",
+    "actual": 23.065,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-11",
+    "actual": 27.901,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-12",
+    "actual": 27.392,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2026-01",
+    "actual": 28.208,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2026-02",
+    "actual": 24.818,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2026-03",
+    "actual": 26.933,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2026-04",
+    "actual": 22.81,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2026-05",
+    "actual": 25.766,
+    "expected": null,
+    "post": false
+   }
+  ],
+  "C06": [
+   {
+    "m": "2024-01",
+    "actual": 14.448,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-02",
+    "actual": 12.928,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-03",
+    "actual": 12.817,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-04",
+    "actual": 12.621,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-05",
+    "actual": 11.485,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-06",
+    "actual": 10.919,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-07",
+    "actual": 9.906,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-08",
+    "actual": 9.784,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-09",
+    "actual": 11.699,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-10",
+    "actual": 12.333,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-11",
+    "actual": 13.174,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2024-12",
+    "actual": 11.746,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-01",
+    "actual": 14.323,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-02",
+    "actual": 12.74,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-03",
+    "actual": 12.84,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-04",
+    "actual": 11.702,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-05",
+    "actual": 11.278,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-06",
+    "actual": 10.632,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-07",
+    "actual": 10.943,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-08",
+    "actual": 9.656,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-09",
+    "actual": 14.126,
+    "expected": null,
+    "post": false
+   },
+   {
+    "m": "2025-10",
+    "actual": 11.296,
+    "expected": 11.542,
+    "post": true
+   },
+   {
+    "m": "2025-11",
+    "actual": 9.83,
+    "expected": 13.962,
+    "post": true
+   },
+   {
+    "m": "2025-12",
+    "actual": 11.434,
+    "expected": 13.708,
+    "post": true
+   },
+   {
+    "m": "2026-01",
+    "actual": 14.13,
+    "expected": 14.116,
+    "post": true
+   },
+   {
+    "m": "2026-02",
+    "actual": 12.169,
+    "expected": 12.419,
+    "post": true
+   },
+   {
+    "m": "2026-03",
+    "actual": 11.504,
+    "expected": 13.478,
+    "post": true
+   },
+   {
+    "m": "2026-04",
+    "actual": 12.221,
+    "expected": 11.414,
+    "post": true
+   },
+   {
+    "m": "2026-05",
+    "actual": 9.976,
+    "expected": 12.894,
+    "post": true
+   }
+  ]
+ }
+}
