@@ -1,0 +1,9 @@
+{
+  "missing_batch_rows":1352.0,
+  "missing_batch_paid":43382.47,
+  "exact_duplicates":2378.0,
+  "invalid_cpt":476.0,
+  "unknown_lab":357.0,
+  "service_after_paid":238.0,
+  "ineligible_member":1787.0
+}
