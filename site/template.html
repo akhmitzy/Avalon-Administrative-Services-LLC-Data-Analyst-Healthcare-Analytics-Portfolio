@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ram Akhmitzyanov · Healthcare Data Analyst Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* Plan: clinical-lab report. Cool slate neutrals, one deep teal accent, IBM Plex family.
+   Layout: single reading column (~1120px) of numbered case studies, each opening with the
+   business question, then the result, then the method and code. Dashboard sits up top. */
+:root {
+  --bg: #f4f7f8;
+  --surface: #ffffff;
+  --surface-2: #eef2f4;
+  --ink: #0f1d26;
+  --muted: #4f5f6a;
+  --faint: #7a8891;
+  --line: #d8e0e4;
+  --accent: #0b6676;
+  --accent-soft: #dcecef;
+  --series-1: #2a78d6;
+  --series-1-soft: rgba(42,120,214,.14);
+  --series-ref: #8a959c;
+  --good: #0ca30c; --warn: #fab219; --serious: #ec835a; --critical: #d03b3b;
+  --code-bg: #0f1d26; --code-ink: #dbe7ec; --code-key: #7fd1de; --code-com: #8ea2ad;
+  --display: "IBM Plex Sans Condensed", "Arial Narrow", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1417; --surface: #151d21; --surface-2: #1b252a; --ink: #e5ecef; --muted: #a3b1b9;
+    --faint: #7d8c95; --line: #2a363c; --accent: #5cb8c7; --accent-soft: #173138;
+    --series-1: #3987e5; --series-1-soft: rgba(57,135,229,.20); --series-ref: #8c979e;
+    --code-bg: #0a0f12; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1417; --surface: #151d21; --surface-2: #1b252a; --ink: #e5ecef; --muted: #a3b1b9;
+  --faint: #7d8c95; --line: #2a363c; --accent: #5cb8c7; --accent-soft: #173138;
+  --series-1: #3987e5; --series-1-soft: rgba(57,135,229,.20); --series-ref: #8c979e;
+  --code-bg: #0a0f12; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 var(--body); }
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 480px) { .wrap { padding: 0 16px; } }
+h1, h2, h3 { font-family: var(--display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.1rem, 4.6vw, 3.1rem); font-weight: 700; letter-spacing: -.01em; }
+h2 { font-size: 1.9rem; font-weight: 600; }
+h3 { font-size: 1.2rem; font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+.num { font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.small { font-size: .875rem; }
+
+/* header */
+header.top { border-bottom: 1px solid var(--line); background: var(--surface); }
+.top-inner { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; padding: 48px 0 40px; align-items: end; }
+@media (max-width: 860px) { .top-inner { grid-template-columns: 1fr; gap: 28px; } }
+.role { font-family: var(--mono); font-size: .82rem; color: var(--accent); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 14px; }
+.lede { font-size: 1.15rem; color: var(--muted); margin-top: 16px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.chip { font-size: .8rem; padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface-2); color: var(--ink); }
+.contact { border-left: 3px solid var(--accent); padding-left: 18px; display: grid; gap: 6px; font-size: .95rem; }
+.contact b { font-family: var(--display); font-size: 1.05rem; }
+.note-synthetic { margin-top: 10px; font-size: .82rem; color: var(--faint); }
+nav.toc { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+nav.toc .wrap { display: flex; gap: 22px; overflow-x: auto; padding-top: 10px; padding-bottom: 10px; }
+nav.toc a { color: var(--muted); text-decoration: none; font-size: .88rem; white-space: nowrap; }
+nav.toc a:hover { color: var(--ink); }
+nav.toc a span { font-family: var(--mono); color: var(--faint); margin-right: 4px; }
+
+/* KPI band */
+.kpis { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin: 36px 0 8px; }
+@media (max-width: 900px) { .kpis { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 480px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+.kpi { background: var(--surface); padding: 16px 18px; }
+.kpi .v { font-family: var(--display); font-size: 1.65rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.kpi .l { font-size: .8rem; color: var(--muted); line-height: 1.35; }
+
+section.block { padding: 64px 0 8px; }
+.sec-head { display: grid; grid-template-columns: 64px 1fr; gap: 0 14px; margin-bottom: 26px; }
+.sec-no { font-family: var(--mono); color: var(--accent); font-size: .95rem; padding-top: 9px; }
+.sec-head p { grid-column: 2; margin-top: 10px; color: var(--muted); font-size: 1.05rem; }
+@media (max-width: 600px) { .sec-head { grid-template-columns: 1fr; } .sec-head p { grid-column: 1; } }
+
+.qa { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+@media (max-width: 860px) { .qa { grid-template-columns: 1fr; } }
+.qa > div { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+.qa h4 { margin: 0 0 6px; font-family: var(--mono); font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); font-weight: 500; }
+.qa p { font-size: .95rem; }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3-2 { display: grid; grid-template-columns: 3fr 2fr; gap: 16px; }
+@media (max-width: 860px) { .grid2, .grid-3-2 { grid-template-columns: 1fr; } }
+.grid2 > *, .grid-3-2 > *, .qa > *, .top-inner > *, .steps > * { min-width: 0; }
+.panel h3 { margin-bottom: 4px; }
+.panel .sub { font-size: .85rem; color: var(--muted); margin-bottom: 12px; }
+.chart-box { position: relative; height: 290px; }
+.chart-box.tall { height: 340px; }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: .82rem; color: var(--muted); margin: 4px 0 10px; }
+.legend i { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--series-1); vertical-align: middle; margin-right: 6px; }
+.legend i.ref { border-top: 2px dashed var(--series-ref); }
+.legend i.sq { width: 12px; height: 12px; border: 0; border-radius: 3px; background: var(--series-1); }
+.legend i.sq.ref { background: var(--series-ref); }
+.legend i.band { width: 14px; height: 10px; border: 0; background: var(--series-1-soft); }
+
+/* dashboard */
+.dash-controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.seg { border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 500 .88rem var(--body); padding: 7px 12px; border-radius: 8px; cursor: pointer; }
+.seg:hover { border-color: var(--accent); }
+.seg[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.seg small { display: block; font-weight: 400; font-size: .72rem; opacity: .8; }
+.dash-kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 16px; }
+@media (max-width: 860px) { .dash-kpis { grid-template-columns: repeat(2, 1fr); } }
+.dk { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.dk .v { font-family: var(--display); font-size: 1.45rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.dk .l { font-size: .78rem; color: var(--muted); }
+.callout { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: .95rem; margin-top: 16px; }
+
+/* status pills */
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; font-weight: 600; padding: 2px 9px 2px 7px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); white-space: nowrap; }
+.pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--faint); }
+.pill.good::before { background: var(--good); }
+.pill.warn::before { background: var(--warn); }
+.pill.serious::before { background: var(--serious); }
+.pill.critical::before { background: var(--critical); }
+
+/* tables */
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; font-size: .78rem; color: var(--muted); background: var(--surface-2); white-space: nowrap; }
+td.r, th.r { text-align: right; font-variant-numeric: tabular-nums; }
+tr:last-child td { border-bottom: 0; }
+td code, p code, li code { font-family: var(--mono); font-size: .84em; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+
+/* code */
+details.code { margin-top: 16px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+details.code summary { cursor: pointer; padding: 11px 16px; font-size: .9rem; font-weight: 500; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+details.code summary::-webkit-details-marker { display: none; }
+details.code summary::after { content: "Show"; font-family: var(--mono); font-size: .78rem; color: var(--accent); }
+details.code[open] summary::after { content: "Hide"; }
+details.code summary span { font-family: var(--mono); font-size: .8rem; color: var(--faint); min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 600px) { details.code summary span { display: none; } }
+pre { margin: 0; background: var(--code-bg); color: var(--code-ink); padding: 16px 18px; overflow-x: auto; font: .8rem/1.55 var(--mono); border-radius: 0 0 10px 10px; }
+pre .k { color: var(--code-key); }
+pre .c { color: var(--code-com); font-style: italic; }
+.code-open pre { border-radius: 10px; }
+
+ul.tight { margin: 10px 0 0; padding-left: 20px; }
+ul.tight li { margin: 4px 0; max-width: 70ch; }
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+@media (max-width: 860px) { .steps { grid-template-columns: 1fr 1fr; } }
+.steps > div { padding: 14px 16px; border-right: 1px solid var(--line); }
+.steps > div:last-child { border-right: 0; }
+.steps b { font-family: var(--mono); font-size: .75rem; color: var(--accent); display: block; letter-spacing: .05em; }
+.steps span { font-size: .88rem; }
+.steps em { display: block; font-style: normal; font-size: .78rem; color: var(--muted); margin-top: 4px; }
+
+footer { margin-top: 72px; border-top: 1px solid var(--line); background: var(--surface); padding: 28px 0 40px; font-size: .9rem; color: var(--muted); }
+.mt16 { margin-top: 16px; } .mt24 { margin-top: 24px; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-inner">
+    <div>
+      <div class="role">Portfolio · Data Analyst, Health Analytics</div>
+      <h1>Ram Akhmitzyanov</h1>
+      <p class="lede">I turn lab claims into answers on spend, policy adherence and client value: clean pipelines, models Finance and Actuarial can audit, and dashboards a client can act on.</p>
+      <div class="chips">
+        <span class="chip">SQL (Snowflake dialect)</span><span class="chip">Snowflake tasks &amp; stored procedures</span>
+        <span class="chip">Python · pandas · DuckDB</span><span class="chip">ETL &amp; data validation</span>
+        <span class="chip">Finance reconciliation</span><span class="chip">IBNR completion</span>
+        <span class="chip">Program impact (DiD)</span><span class="chip">Forecasting</span><span class="chip">Excel pricing models</span>
+        <span class="chip">Tableau-ready marts</span><span class="chip">Cortex Analyst semantic model</span><span class="chip">GitHub Actions CI</span>
+      </div>
+    </div>
+    <div class="contact">
+      <b>Contact</b>
+      <span>arramzis@gmail.com</span>
+      <span class="muted small">Remote · available for quarterly travel to Tampa, FL</span>
+      <span class="muted small">Repository: <code>diagnostic-insights-analytics</code></span>
+      <p class="note-synthetic">All data here is synthetic, generated to behave like a diagnostic benefit management book of business: six health plans, a program that goes live at different dates, and deliberate data defects. Every number on this page comes from running the code in the repository.</p>
+    </div>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Sections">
+  <div class="wrap">
+    <a href="#dashboard"><span>00</span>Client dashboard</a>
+    <a href="#pipeline"><span>01</span>Pipeline &amp; data quality</a>
+    <a href="#policy"><span>02</span>Policy adherence</a>
+    <a href="#impact"><span>03</span>Program impact &amp; ROI</a>
+    <a href="#forecast"><span>04</span>Forecast</a>
+    <a href="#pricing"><span>05</span>Prospect pricing</a>
+    <a href="#ai"><span>06</span>AI-enabled analytics</a>
+    <a href="#fit"><span>07</span>Role fit</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <div class="kpis" id="kpis"></div>
+  <p class="muted small">Book of business: 6 plans (Commercial, Medicare Advantage, Medicaid), Jan 2024 – Jun 2026 service dates, claims paid through 30 Jun 2026.</p>
+
+  <!-- 00 DASHBOARD -->
+  <section class="block" id="dashboard">
+    <div class="sec-head">
+      <div class="sec-no">00</div>
+      <h2>Client performance dashboard</h2>
+      <p>The view an account team opens before a quarterly business review. Pick a plan to see its lab spend against the expected trend, where its avoidable spend sits, and whether its performance guarantee is on track. Built from the same marts that feed the Tableau extracts.</p>
+    </div>
+    <div class="dash-controls" id="clientButtons" role="group" aria-label="Choose a health plan"></div>
+    <div class="dash-kpis" id="dashKpis"></div>
+    <div class="grid-3-2">
+      <div class="panel">
+        <h3 id="pmpmTitle">Lab allowed PMPM</h3>
+        <div class="sub" id="pmpmSub">Actual vs. expected without the program (completed for claims not yet paid)</div>
+        <div class="legend"><span><i></i>Actual PMPM</span><span><i class="ref"></i>Expected without program</span></div>
+        <div class="chart-box"><canvas id="pmpmChart" aria-label="Monthly PMPM chart"></canvas></div>
+      </div>
+      <div class="panel">
+        <h3>Avoidable spend by policy</h3>
+        <div class="sub" id="polSub">$ PMPM, before vs. after go-live</div>
+        <div class="legend"><span><i class="sq ref"></i>Before go-live</span><span><i class="sq"></i>After go-live</span></div>
+        <div class="chart-box"><canvas id="polChart" aria-label="Avoidable PMPM by policy chart"></canvas></div>
+        <p class="small muted" id="polFoot"></p>
+      </div>
+    </div>
+    <div class="callout" id="dashNote"></div>
+  </section>
+
+  <!-- 01 PIPELINE -->
+  <section class="block" id="pipeline">
+    <div class="sec-head">
+      <div class="sec-no">01</div>
+      <h2>An ELT pipeline that refuses to publish bad numbers</h2>
+      <p>Raw claim files land; staging standardizes and tags every defect; a quality gate decides whether marts refresh; Finance totals are reconciled every run.</p>
+    </div>
+    <div class="qa">
+      <div><h4>Business question</h4><p>Can Finance, Actuarial and client teams trust that every dashboard number ties to what was actually paid?</p></div>
+      <div><h4>What I built</h4><p>SQL staging &amp; marts (Snowflake-compatible, CI-tested on DuckDB), 9 automated checks with BLOCKER/WARN severity, a GL reconciliation with batch-level drill-down, a Snowflake TASK + ALERT, and a GitHub Actions workflow.</p></div>
+      <div><h4>Result</h4><p id="pipeResult"></p></div>
+    </div>
+    <div class="steps">
+      <div><b>RAW</b><span>Parquet claims, eligibility, GL, reference</span><em>COPY INTO from S3 stage</em></div>
+      <div><b>STAGING</b><span>Dedupe, type, tag defects, net reversals</span><em>stg_claims_lab → stg_claims_net</em></div>
+      <div><b>QA GATE</b><span>Checks + GL reconciliation</span><em>BLOCKER stops the run</em></div>
+      <div><b>MARTS</b><span>Policy flags, client-month metrics, lag triangle</span><em>Tableau extracts at 07:00</em></div>
+    </div>
+    <div class="grid2 mt16">
+      <div>
+        <h3 class="mt16" style="margin-bottom:10px">Automated checks, latest run</h3>
+        <div class="tbl-wrap"><table id="dqTable"></table></div>
+      </div>
+      <div>
+        <h3 class="mt16" style="margin-bottom:10px">Claims vs. Finance GL</h3>
+        <div class="tbl-wrap"><table id="reconTable"></table></div>
+        <p class="small muted mt16" id="reconNote"></p>
+        <div class="callout"><b>A bug the tests caught.</b> The first version netted reversals using only the valid lines of a claim. When a reversal line failed a check but its original passed, the service was double counted. An integration test (<code>test_no_quarantined_lines_reach_marts</code>) found 22 such claims; the fix quarantines the whole claim.</div>
+      </div>
+    </div>
+    <details class="code"><summary>Reconciliation SQL <span>sql/quality/02_reconcile_finance_gl.sql</span></summary><pre>{{CODE_RECON}}</pre></details>
+    <details class="code"><summary>Snowflake stored procedure with quality gate <span>snowflake/02_sp_refresh_lab_marts.sql</span></summary><pre>{{CODE_SP}}</pre></details>
+  </section>
+
+  <!-- 02 POLICY -->
+  <section class="block" id="policy">
+    <div class="sec-head">
+      <div class="sec-no">02</div>
+      <h2>Policy-adherence engine: where the avoidable dollars are</h2>
+      <p>Seven evidence-based lab policies written as SQL rules, run against every payable claim. Each claim gets at most one finding and an avoidable-cost estimate that is defensible line by line.</p>
+    </div>
+    <div class="qa">
+      <div><h4>Business question</h4><p>How much of a plan's lab spend is avoidable, and which policies should we lead with?</p></div>
+      <div><h4>Approach</h4><p>Window functions and self-joins for frequency limits (HbA1c), look-back windows (presumptive before definitive drug testing), indication lookups for genetic tests, and an in-network median benchmark for out-of-network price.</p></div>
+      <div><h4>Result</h4><p id="polResult"></p></div>
+    </div>
+    <div class="grid-3-2">
+      <div class="panel">
+        <h3>Avoidable allowed $ by policy, all plans, Jan 2024 – Jun 2026</h3>
+        <div class="sub">Out-of-network price and genetic testing without indication lead; frequency rules are many claims, few dollars</div>
+        <div class="chart-box"><canvas id="polTotalChart" aria-label="Avoidable dollars by policy"></canvas></div>
+      </div>
+      <div class="tbl-wrap"><table id="polTable"></table></div>
+    </div>
+    <ul class="tight small muted mt16">
+      <li>Avoidable cost is the full allowed amount for tests that should not have been done, but only the price gap where a cheaper test answers the same question (definitive drug panel 22+ classes vs. 1–7; full respiratory panel vs. a targeted SARS-CoV-2/flu/RSV panel).</li>
+      <li>The HbA1c rule is evaluated from Jan 2025 so every test has a full 12-month look-back; earlier tests would be under-counted and make the program look worse than it is.</li>
+      <li>Seven unit tests on hand-built claims pin each rule's edge cases (e.g. a presumptive screen 19 days before passes; 30+ days fails).</li>
+    </ul>
+    <details class="code"><summary>Policy rules (excerpt) <span>sql/marts/01_policy_flags.sql</span></summary><pre>{{CODE_POLICY}}</pre></details>
+  </section>
+
+  <!-- 03 IMPACT -->
+  <section class="block" id="impact">
+    <div class="sec-head">
+      <div class="sec-no">03</div>
+      <h2>Program impact, client ROI and performance guarantees</h2>
+      <p>Plans went live on different dates, which is what makes a credible counterfactual possible: plans not yet live stand in for what would have happened.</p>
+    </div>
+    <div class="qa">
+      <div><h4>Business question</h4><p>How much did each client save, did we meet the guaranteed return on fees, and is any refund owed?</p></div>
+      <div><h4>Approach</h4><p>Imputation difference-in-differences: fit plan and calendar-month effects on untreated months only, predict each live month's expected PMPM, and price the gap. Recent months are completed with chain-ladder factors first.</p></div>
+      <div><h4>Result</h4><p id="impResult"></p></div>
+    </div>
+    <div class="tbl-wrap"><table id="scoreTable"></table></div>
+    <div class="grid2 mt16">
+      <div class="panel">
+        <h3>How I checked the estimate</h3>
+        <ul class="tight small" id="impChecks"></ul>
+      </div>
+      <div class="panel">
+        <h3>Claims completion (IBNR) at valuation</h3>
+        <div class="sub">Share of eventual dollars already paid, by service month</div>
+        <div class="tbl-wrap" style="border:0"><table id="cfTable"></table></div>
+      </div>
+    </div>
+    <div class="callout" id="pinecrestNote"></div>
+    <details class="code"><summary>Counterfactual estimator <span>src/analysis/program_impact.py</span></summary><pre>{{CODE_IMPACT}}</pre></details>
+  </section>
+
+  <!-- 04 FORECAST -->
+  <section class="block" id="forecast">
+    <div class="sec-head">
+      <div class="sec-no">04</div>
+      <h2>Lab spend forecast, tested out of sample</h2>
+      <p>Finance needs 2027 lab spend by client for budgeting and renewal pricing. The model is judged on months it never saw, against the simple alternative an analyst would otherwise use.</p>
+    </div>
+    <div class="qa">
+      <div><h4>Business question</h4><p>What will each plan's lab spend be in 2027, and how far off could we be?</p></div>
+      <div><h4>Approach</h4><p>Log-PMPM regression with plan levels, a client-specific program shift, pooled trend and month-of-year seasonality. Backtest: train through Dec 2025, test Jan–May 2026, compare with seasonal-naive.</p></div>
+      <div><h4>Result</h4><p id="fcResult"></p></div>
+    </div>
+    <div>
+      <div class="panel">
+        <h3 id="fcTitle">PMPM history and forecast</h3>
+        <div class="sub">Pick a plan in the dashboard above to switch this chart</div>
+        <div class="legend"><span><i></i>Actual (completed)</span><span><i class="ref"></i>Backtest forecast</span><span><i class="band"></i>Forecast, 80% range</span></div>
+        <div class="chart-box tall"><canvas id="fcChart" aria-label="Forecast chart"></canvas></div>
+      </div>
+      <div class="grid2 mt16">
+        <div class="tbl-wrap"><table id="btTable"></table></div>
+        <div class="tbl-wrap"><table id="y27Table"></table></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 PRICING -->
+  <section class="block" id="pricing">
+    <div class="sec-head">
+      <div class="sec-no">05</div>
+      <h2>Pricing a prospect: Lakeshore Senior Plan</h2>
+      <p>A Medicare Advantage plan considering the program. The model runs the policy engine on its own claims, applies capture rates actually achieved at live clients, and tests three contract structures.</p>
+    </div>
+    <div class="qa">
+      <div><h4>Business question</h4><p>What can we credibly promise Lakeshore, and which fee structure works for both sides?</p></div>
+      <div><h4>Approach</h4><p>Baseline avoidable PMPM by policy (last 12 complete months) × capture (low = weakest live client, base = MA peer, high = strongest) × trend × year-1 ramp. Delivered as an Excel model with live formulas and editable inputs.</p></div>
+      <div><h4>Result</h4><p id="prResult"></p></div>
+    </div>
+    <div class="grid2">
+      <div class="tbl-wrap"><table id="prPolicyTable"></table></div>
+      <div class="tbl-wrap"><table id="prScenTable"></table></div>
+    </div>
+    <p class="small muted mt16">Workbook: <code>outputs/Lakeshore_pricing_model.xlsx</code> (Inputs, Pricing Model, Peer Benchmarks, Notes; 89 formulas, recalculated with zero errors and cross-checked against the Python calculation).</p>
+  </section>
+
+  <!-- 06 AI -->
+  <section class="block" id="ai">
+    <div class="sec-head">
+      <div class="sec-no">06</div>
+      <h2>AI-enabled analytics with guardrails</h2>
+      <p>A semantic model in Snowflake Cortex Analyst format lets account managers ask questions in plain English and get governed SQL, using the same metric definitions as the dashboards.</p>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <h3>Why the guardrail matters</h3>
+        <p class="small mt16">The classic mistake in this data is summing member months across test-category rows, which makes PMPM about five times too low. The semantic model documents the rule, and CI runs every verified query against an independent pandas calculation, including a check that the wrong version would be caught.</p>
+        <ul class="tight small" id="semChecks"></ul>
+      </div>
+      <details class="code code-open" open><summary>Semantic model (excerpt) <span>semantic/lab_analytics.yaml</span></summary><pre>{{CODE_YAML}}</pre></details>
+    </div>
+  </section>
+
+  <!-- 07 FIT -->
+  <section class="block" id="fit">
+    <div class="sec-head">
+      <div class="sec-no">07</div>
+      <h2>Where each responsibility in the role shows up</h2>
+      <p>A map from the job description to the work above, so a reviewer can go straight to evidence.</p>
+    </div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Responsibility</th><th>Evidence</th></tr></thead>
+      <tbody>
+        <tr><td>SQL queries, scripts, stored procedures</td><td>Staging, QA and mart SQL; <code>SP_REFRESH_LAB_MARTS</code> in Snowflake Scripting (01, 02)</td></tr>
+        <tr><td>Snowflake for preparation, modeling, automation</td><td>Schemas, stage, <code>COPY INTO</code>, clustered RAW table, scheduled TASK and ALERT (01)</td></tr>
+        <tr><td>Dashboards and visualizations</td><td>Client dashboard (00) built on <code>marts.client_month_metrics</code>, the Tableau data source</td></tr>
+        <tr><td>Models for underwriting, pricing, forecasting, client value</td><td>Program impact and guarantee scorecard (03), forecast (04), prospect pricing workbook (05)</td></tr>
+        <tr><td>ETL and automated jobs</td><td>Pipeline runner with quality gate, GitHub Actions schedule, Snowflake TASK (01)</td></tr>
+        <tr><td>Validation, reconciliation, QA</td><td>9 checks, GL reconciliation to the batch, 13 pytest tests (01, 02)</td></tr>
+        <tr><td>Client performance and recommendations</td><td>Pinecrest diagnosis and next steps (03), dashboard notes (00)</td></tr>
+        <tr><td>AI-enabled tools, natural-language querying</td><td>Cortex Analyst semantic model with tested verified queries (06)</td></tr>
+        <tr><td>Excel for analysis</td><td>Pricing workbook with scenario columns, color-coded inputs, documented assumptions (05)</td></tr>
+        <tr><td>Presenting to technical and non-technical audiences</td><td>Each case study leads with the business question and answer, then method and code</td></tr>
+      </tbody>
+    </table></div>
+    <h3 class="mt24" style="margin-bottom:10px">Run it yourself</h3>
+    <pre style="border-radius:10px">{{CODE_RUN}}</pre>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">Ram Akhmitzyanov · arramzis@gmail.com · Built for the Data Analyst, Health Analytics role. Health plans, labs and members are fictional; test codes, ICD-10 codes and policy logic follow real-world conventions.</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const DATA = /*__DATA__*/null;
+const POLICY = {
+  P01: "Vitamin D screening without indication", P02: "HbA1c above frequency limit",
+  P03: "Same-day duplicate test", P04: "Definitive drug test without presumptive",
+  P05: "Full respiratory panel without indication", P06: "Genetic test without indication",
+  P07: "Out-of-network price above in-network"
+};
+const POL_SHORT = { P01: "Vitamin D", P02: "HbA1c freq.", P03: "Duplicate", P04: "Drug testing", P05: "Resp. panel", P06: "Genetic", P07: "Out-of-network" };
+const $ = s => document.querySelector(s);
+const fmt = {
+  usd: v => (Number(v) < 0 ? "−$" : "$") + Math.abs(Math.round(Number(v))).toLocaleString("en-US"),
+  usd2: v => "$" + Number(v).toFixed(2),
+  k: v => { v = Number(v); const s = v < 0 ? "−$" : "$"; v = Math.abs(v); return v >= 1e6 ? s + (v / 1e6).toFixed(2) + "M" : s + Math.round(v / 1e3).toLocaleString() + "K"; },
+  pct: (v, d = 1) => (Number(v) * 100).toFixed(d) + "%",
+  int: v => Number(v).toLocaleString("en-US"),
+  x: (v, d = 2) => (Number(v) < 0 ? "−" + Math.abs(Number(v)).toFixed(d) : Number(v).toFixed(d)) + "x"
+};
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const imp = DATA.program_impact, fc = DATA.forecast, pr = DATA.pricing, ov = DATA.overview;
+const clientsById = Object.fromEntries(DATA.clients.map(c => [c.client_id, c]));
+const scoreById = Object.fromEntries(imp.clients.map(c => [c.client_id, c]));
+let current = "C01";
+
+function table(el, head, rows, alignRight = []) {
+  el.innerHTML = "<thead><tr>" + head.map((h, i) => `<th class="${alignRight.includes(i) ? "r" : ""}">${h}</th>`).join("") +
+    "</tr></thead><tbody>" + rows.map(r => "<tr>" + r.map((c, i) => `<td class="${alignRight.includes(i) ? "r" : ""}">${c}</td>`).join("") + "</tr>").join("") + "</tbody>";
+}
+const pill = (cls, txt) => `<span class="pill ${cls}">${txt}</span>`;
+
+/* ---------- KPI band ---------- */
+(function () {
+  const items = [
+    [fmt.int(ov.members), "members across 6 health plans"],
+    [fmt.int(ov.raw_lines), "lab claim lines processed"],
+    [fmt.pct(ov.valid_rate, 2), "lines passing every quality check"],
+    [`${ov.recon_ok}/${ov.recon_total}`, "client-months tied to the Finance GL"],
+    [fmt.k(ov.avoidable_total), "avoidable spend found by policy engine"],
+    [fmt.k(imp.total_savings), "estimated program savings to date"]
+  ];
+  $("#kpis").innerHTML = items.map(([v, l]) => `<div class="kpi"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("");
+})();
+
+/* ---------- charts ---------- */
+Chart.defaults.font.family = "IBM Plex Sans, Arial, sans-serif";
+Chart.defaults.font.size = 12;
+const charts = {};
+function baseOpts(yFmt, extra = {}) {
+  const ink = css("--muted"), grid = css("--line");
+  return Object.assign({
+    responsive: true, maintainAspectRatio: false, animation: false,
+    interaction: { mode: "index", intersect: false },
+    plugins: { legend: { display: false }, tooltip: { backgroundColor: css("--ink"), titleColor: css("--surface"), bodyColor: css("--surface"),
+      callbacks: { label: c => c.raw == null ? null : ` ${c.dataset.label}: ${yFmt(c.raw.y ?? c.raw)}` } } },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: ink, maxRotation: 0, autoSkipPadding: 18 }, border: { color: grid } },
+      y: { grid: { color: grid }, border: { display: false }, ticks: { color: ink, callback: v => yFmt(v) } }
+    }
+  }, extra);
+}
+function monthLabel(m) { const [y, mo] = m.split("-"); return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+mo - 1] + " " + y.slice(2); }
+
+function drawPmpm() {
+  const s = imp.series[current] || [];
+  const live = !!scoreById[current];
+  const labels = s.map(r => monthLabel(r.m));
+  const c1 = css("--series-1"), ref = css("--series-ref"), surf = css("--surface");
+  const ds = [{ label: "Actual PMPM", data: s.map(r => r.actual), borderColor: c1, backgroundColor: c1, borderWidth: 2,
+                pointRadius: s.map((r, i) => i === s.length - 1 ? 4 : 0), pointBorderColor: surf, pointBorderWidth: 2, tension: .25 }];
+  if (live) ds.push({ label: "Expected without program", data: s.map(r => r.expected), borderColor: ref, borderDash: [5, 4],
+                      borderWidth: 2, pointRadius: 0, tension: .25, spanGaps: false });
+  const gl = clientsById[current].go_live_date;
+  const golive = gl ? labels.indexOf(monthLabel(gl.slice(0, 7))) : -1;
+  const marker = { id: "golive", afterDraw(ch) {
+      if (golive < 0) return; const x = ch.scales.x.getPixelForValue(golive), a = ch.chartArea, ctx = ch.ctx;
+      ctx.save(); ctx.strokeStyle = css("--faint"); ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(x, a.top); ctx.lineTo(x, a.bottom); ctx.stroke();
+      ctx.setLineDash([]); ctx.fillStyle = css("--muted"); ctx.font = "12px IBM Plex Sans, Arial"; ctx.fillText("Go-live", x + 5, a.top + 12); ctx.restore(); } };
+  charts.pmpm && charts.pmpm.destroy();
+  charts.pmpm = new Chart($("#pmpmChart"), { type: "line", data: { labels, datasets: ds }, options: baseOpts(fmt.usd2), plugins: [marker] });
+}
+
+function drawPolicy() {
+  const rows = DATA.policy_by_client.filter(r => r.client_id === current);
+  const pids = Object.keys(POLICY);
+  const live = !!scoreById[current];
+  const get = (per, p) => { const r = rows.find(x => x.program_period === per && x.policy_id === p); return r ? Number(r.avoidable_pmpm) : 0; };
+  const ref = css("--series-ref"), c1 = css("--series-1");
+  const ds = live
+    ? [{ label: "Before go-live", data: pids.map(p => get("Pre go-live", p)), backgroundColor: ref, borderRadius: 4, borderSkipped: "start", barPercentage: .8, categoryPercentage: .7 },
+       { label: "After go-live", data: pids.map(p => get("Post go-live", p)), backgroundColor: c1, borderRadius: 4, borderSkipped: "start", barPercentage: .8, categoryPercentage: .7 }]
+    : [{ label: "Avoidable PMPM (not live)", data: pids.map(p => get("Not live", p)), backgroundColor: ref, borderRadius: 4, borderSkipped: "start", barPercentage: .8, categoryPercentage: .7 }];
+  const o = baseOpts(fmt.usd2, { indexAxis: "y" });
+  o.interaction = { mode: "index", axis: "y", intersect: false };
+  o.scales = { x: { grid: { color: css("--line") }, border: { display: false }, ticks: { color: css("--muted"), callback: v => "$" + v.toFixed(2) } },
+               y: { grid: { display: false }, ticks: { color: css("--muted") }, border: { color: css("--line") } } };
+  o.plugins.tooltip.callbacks.title = items => POLICY[pids[items[0].dataIndex]];
+  charts.pol && charts.pol.destroy();
+  charts.pol = new Chart($("#polChart"), { type: "bar", data: { labels: pids.map(p => POL_SHORT[p]), datasets: ds }, options: o });
+  $("#polSub").textContent = live ? "$ PMPM, before vs. after go-live" : "$ PMPM, plan not live: this is the opportunity";
+  $("#polFoot").textContent = live && !rows.some(r => r.policy_id === "P02" && r.program_period === "Pre go-live")
+    ? "HbA1c has no before value: the plan went live before the rule's 12-month look-back was available (Jan 2025)." : "";
+}
+
+function drawForecast() {
+  const s = fc.series[current];
+  const months = [...s.hist.map(r => r.m), ...s.fcst.map(r => r.m)];
+  const labels = months.map(monthLabel);
+  const idx = Object.fromEntries(months.map((m, i) => [m, i]));
+  const arr = () => new Array(months.length).fill(null);
+  const hist = arr(), bt = arr(), f = arr(), lo = arr(), hi = arr();
+  s.hist.forEach(r => hist[idx[r.m]] = r.v);
+  s.backtest.forEach(r => bt[idx[r.m]] = r.v);
+  s.fcst.forEach(r => { f[idx[r.m]] = r.v; lo[idx[r.m]] = r.lo; hi[idx[r.m]] = r.hi; });
+  const last = s.hist[s.hist.length - 1]; f[idx[last.m]] = last.v; lo[idx[last.m]] = last.v; hi[idx[last.m]] = last.v;
+  const c1 = css("--series-1"), soft = css("--series-1-soft"), ref = css("--series-ref");
+  const ds = [
+    { label: "80% high", data: hi, borderWidth: 0, pointRadius: 0, fill: "+1", backgroundColor: soft },
+    { label: "80% low", data: lo, borderWidth: 0, pointRadius: 0, fill: false },
+    { label: "Actual", data: hist, borderColor: c1, borderWidth: 2, pointRadius: 0, tension: .25 },
+    { label: "Backtest", data: bt, borderColor: ref, borderDash: [5, 4], borderWidth: 2, pointRadius: 0, tension: .25 },
+    { label: "Forecast", data: f, borderColor: c1, borderDash: [2, 3], borderWidth: 2, pointRadius: 0, tension: .25 }
+  ];
+  const o = baseOpts(fmt.usd2);
+  o.plugins.tooltip.filter = i => !i.dataset.label.startsWith("80%") && i.raw != null;
+  charts.fc && charts.fc.destroy();
+  charts.fc = new Chart($("#fcChart"), { type: "line", data: { labels, datasets: ds }, options: o });
+  $("#fcTitle").textContent = `${clientsById[current].client_name}: PMPM history and forecast`;
+}
+
+/* ---------- dashboard ---------- */
+function renderDash() {
+  document.querySelectorAll("#clientButtons .seg").forEach(b => b.setAttribute("aria-pressed", b.dataset.id === current));
+  const c = clientsById[current], s = scoreById[current];
+  let k;
+  if (s) {
+    const status = s.guarantee_met ? pill("good", "Guarantee met") : pill("critical", "Guarantee missed");
+    k = [[fmt.usd2(s.expected_pmpm), "Expected PMPM (post go-live)"], [fmt.usd2(s.actual_pmpm), "Actual PMPM"],
+         [fmt.pct(s.savings_pct), `Savings (${fmt.pct(s.savings_pct_low)} to ${fmt.pct(s.savings_pct_high)})`],
+         [fmt.x(s.roi_multiple), `ROI on fees vs ${fmt.x(s.guarantee_multiple, 1)} guaranteed`], [status, s.fee_refund_due > 0 ? `Refund due ${fmt.usd(s.fee_refund_due)}` : "No refund due"]];
+  } else {
+    const p = pr.scenarios.base;
+    k = [[fmt.usd2(pr.baseline_pmpm), "Baseline PMPM (last 12 mo)"], [fmt.usd2(pr.avoidable_total), "Avoidable PMPM today"],
+         [fmt.pct(pr.avoidable_total / pr.baseline_pmpm), "Share of spend avoidable"], [fmt.usd2(p.savings_pmpm_y1), "Year-1 savings PMPM (base)"],
+         [pill("warn", "Prospect"), "Not live: see section 05"]];
+  }
+  $("#dashKpis").innerHTML = k.map(([v, l]) => `<div class="dk"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("");
+  $("#pmpmTitle").textContent = `${c.client_name}: lab allowed PMPM`;
+  $("#dashNote").innerHTML = NOTES[current];
+  drawPmpm(); drawPolicy(); drawForecast();
+}
+const NOTES = {/*__NOTES__*/};
+$("#clientButtons").innerHTML = DATA.clients.map(c => `<button class="seg" type="button" id="btn-${c.client_id}" data-id="${c.client_id}" aria-pressed="false">${c.client_name}<small>${c.line_of_business}${c.go_live_date ? " · live " + monthLabel(c.go_live_date.slice(0, 7)) : " · prospect"}</small></button>`).join("");
+$("#clientButtons").addEventListener("click", e => { const b = e.target.closest(".seg"); if (b) { current = b.dataset.id; renderDash(); } });
+
+/* ---------- static tables ---------- */
+const statusPill = s => s === "PASS" ? pill("good", "Pass") : s === "PASS_WITH_EXCEPTIONS" ? pill("warn", "Pass, rows quarantined") : pill("critical", "Fail");
+table($("#dqTable"), ["Check", "Severity", "Rows", "Status"],
+  DATA.dq_checks.map(r => [r.check_name.replaceAll("_", " "), r.severity, fmt.int(r.failing_rows), statusPill(r.status)]), [2]);
+const rx = DATA.recon_exceptions[0], gap = DATA.recon_gaps[0];
+table($("#reconTable"), ["Result", "Client-months", ""],
+  [["Reconciled (within $500 or 0.5%)", ov.recon_ok, pill("good", "Tied")],
+   ["Needs investigation", ov.recon_total - ov.recon_ok, pill("critical", "Investigate")]], [1]);
+$("#reconNote").innerHTML = `Exception: <b>${clientsById[rx.client_id].client_name}</b>, paid ${monthLabel(rx.paid_month.slice(0, 7))}. Claims ${fmt.usd(rx.claims_paid)} vs GL ${fmt.usd(rx.gl_paid)} (${fmt.usd(rx.variance)}, ${fmt.pct(rx.variance_pct)}). The batch drill-down shows weekly file <b>${gap.missing_week_batch}</b> never arrived, so the ask to the data vendor is a specific re-send, not a vague "numbers look off".`;
+$("#pipeResult").innerHTML = `${fmt.int(ov.raw_lines)} lines in; ${fmt.pct(ov.valid_rate, 2)} valid; every injected defect caught; ${ov.recon_ok} of ${ov.recon_total} client-months tie to the GL, and the one that does not is traced to a single missing weekly file.`;
+
+const polTot = DATA.policy_totals, avTot = polTot.reduce((a, r) => a + Number(r.avoidable), 0);
+table($("#polTable"), ["Policy", "Claims", "Avoidable $"], polTot.map(r => [`<b>${r.policy_id}</b> ${POLICY[r.policy_id]}`, fmt.int(r.claims), fmt.usd(r.avoidable)]), [1, 2]);
+$("#polResult").innerHTML = `${fmt.int(ov.flagged_claims)} claims (${fmt.pct(ov.flagged_claims / ov.payable_claims)}) failed a policy, carrying ${fmt.k(avTot)} of avoidable spend: ${fmt.pct(avTot / Number(ov.total_allowed))} of ${fmt.k(ov.total_allowed)} lab allowed.`;
+function drawPolTot() {
+  const sorted = [...polTot].sort((a, b) => b.avoidable - a.avoidable);
+  const o = baseOpts(fmt.k, { indexAxis: "y" });
+  o.interaction = { mode: "nearest", axis: "y", intersect: false };
+  o.scales = { x: { grid: { color: css("--line") }, border: { display: false }, ticks: { color: css("--muted"), callback: v => fmt.k(v) } },
+               y: { grid: { display: false }, ticks: { color: css("--muted") }, border: { color: css("--line") } } };
+  o.plugins.tooltip.callbacks.title = items => POLICY[sorted[items[0].dataIndex].policy_id];
+  charts.polTot && charts.polTot.destroy();
+  charts.polTot = new Chart($("#polTotalChart"), { type: "bar", data: { labels: sorted.map(r => POL_SHORT[r.policy_id]),
+    datasets: [{ label: "Avoidable allowed", data: sorted.map(r => Number(r.avoidable)), backgroundColor: css("--series-1"), borderRadius: 4, borderSkipped: "start", barPercentage: .7 }] }, options: o });
+}
+
+table($("#scoreTable"), ["Plan", "Live since", "Expected PMPM", "Actual PMPM", "Savings % (95% band)", "Savings $", "Fees $", "ROI", "Guarantee", "Refund"],
+  imp.clients.map(c => [`${c.client_name}<br><span class="muted small">${c.line_of_business}</span>`, `${monthLabel(c.go_live)}<br><span class="muted small">${c.post_months} months</span>`, fmt.usd2(c.expected_pmpm), fmt.usd2(c.actual_pmpm),
+    `${fmt.pct(c.savings_pct)} <span class="muted small">(${fmt.pct(c.savings_pct_low)} to ${fmt.pct(c.savings_pct_high)})</span>`, fmt.usd(c.gross_savings), fmt.usd(c.fees),
+    fmt.x(c.roi_multiple), c.guarantee_met ? pill("good", `Met (${fmt.x(c.guarantee_multiple, 1)})`) : pill("critical", `Missed (${fmt.x(c.guarantee_multiple, 1)})`), c.fee_refund_due > 0 ? fmt.usd(c.fee_refund_due) : "–"]),
+  [2, 3, 5, 6, 7, 9]);
+$("#impResult").innerHTML = `${fmt.k(imp.total_savings)} estimated savings on ${fmt.k(imp.total_fees)} of fees: ${fmt.x(imp.portfolio_roi, 1)} portfolio ROI. Two plans clear their guarantee; three are short, with ${fmt.usd(imp.clients.reduce((a, c) => a + c.fee_refund_due, 0))} in fee refunds due.`;
+$("#impChecks").innerHTML = [
+  `<b>Placebo outcome:</b> core panels (CMP, CBC, lipid, TSH, UA) are not targeted by any policy; their utilization moved ${fmt.pct(imp.placebo_core_util_effect)}, close to zero as it should be.`,
+  `<b>Placebo in time:</b> pretending go-live happened 6 months early gives a ${fmt.pct(imp.placebo_in_time_effect)} "effect". That is the noise floor at plan level, so results inside about ±4% are not conclusive.`,
+  `<b>Bottom-up cross-check:</b> drop in policy-avoidable PMPM explains most of the top-down savings (${fmt.k(imp.clients.reduce((a, c) => a + c.bottom_up_savings, 0))} vs ${fmt.k(imp.total_savings)}).`,
+  `<b>Rejected alternative:</b> plan-specific trends over-extrapolated from short pre-periods and made both placebos worse, so they stay out of the headline.`
+].map(t => `<li>${t}</li>`).join("");
+table($("#cfTable"), ["Service month", "Months paid", "% complete", "Factor"],
+  DATA.completion_factors.recent.map(r => [monthLabel(r.month), r.dev, fmt.pct(r.pct_complete), r.cf.toFixed(3)]), [1, 2, 3]);
+$("#pinecrestNote").innerHTML = NOTES.PINECREST;
+
+const bt = fc.backtest;
+table($("#btTable"), ["Plan", "MAPE model", "MAPE naive", "Spend bias"],
+  bt.map(r => [r.client_name, fmt.pct(r.mape_model), fmt.pct(r.mape_naive), (r.bias_model > 0 ? "+" : "") + fmt.pct(r.bias_model)]), [1, 2, 3]);
+table($("#y27Table"), ["Plan", "2027 PMPM", "2027 allowed", "80% range"],
+  fc.y2027.map(r => [r.client_name, fmt.usd2(r.pmpm_2027), fmt.k(r.spend_2027), `${fmt.k(r.spend_2027_lo)} – ${fmt.k(r.spend_2027_hi)}`]), [1, 2, 3]);
+const better = bt.filter(r => r.mape_model < r.mape_naive - 0.005).length;
+$("#fcResult").innerHTML = `Portfolio spend for Jan–May 2026 forecast within ${fmt.pct(Math.abs(fc.portfolio_backtest_error_model))} (seasonal-naive: ${fmt.pct(Math.abs(fc.portfolio_backtest_error_naive))}). Lower error than naive for ${better} of 6 plans. Underlying trend ${fmt.pct(fc.underlying_trend)} a year, led by genomic testing.`;
+
+const capBy = Object.fromEntries(pr.capture.map(r => [r.policy_id, r]));
+table($("#prPolicyTable"), ["Policy", "Avoidable PMPM", "Capture low / base / high"],
+  Object.keys(POLICY).map(p => [`<b>${p}</b> ${POL_SHORT[p]}`, fmt.usd2(pr.avoidable[p] || 0),
+    `${fmt.pct(Math.max(0, capBy[p].capture_min), 0)} / <b>${fmt.pct(capBy[p].capture_ma_peer, 0)}</b> / ${fmt.pct(capBy[p].capture_max, 0)}`]), [1, 2]);
+const S = pr.scenarios;
+table($("#prScenTable"), ["Contract year 2027", "Low", "Base", "High"], [
+  ["Year-1 savings PMPM", fmt.usd2(S.low.savings_pmpm_y1), fmt.usd2(S.base.savings_pmpm_y1), fmt.usd2(S.high.savings_pmpm_y1)],
+  ["Gross savings", fmt.k(S.low.gross_savings), fmt.k(S.base.gross_savings), fmt.k(S.high.gross_savings)],
+  ["% of projected lab spend", fmt.pct(S.low.pct_of_spend), fmt.pct(S.base.pct_of_spend), fmt.pct(S.high.pct_of_spend)],
+  ["Break-even fee PMPM at 2.0x", fmt.usd2(S.low.breakeven_fee_pmpm), fmt.usd2(S.base.breakeven_fee_pmpm), fmt.usd2(S.high.breakeven_fee_pmpm)],
+  ["A. $1.00 fixed fee: client ROI", fmt.x(S.low.fixed_fee_roi), fmt.x(S.base.fixed_fee_roi), fmt.x(S.high.fixed_fee_roi)],
+  ["C. Hybrid $0.60 + 15%: client ROI", fmt.x(S.low.hybrid_roi), fmt.x(S.base.hybrid_roi), fmt.x(S.high.hybrid_roi)],
+  ["C. Hybrid: refund owed", S.low.hybrid_refund > 0 ? fmt.k(S.low.hybrid_refund) : "–", S.base.hybrid_refund > 0 ? fmt.k(S.base.hybrid_refund) : "–", S.high.hybrid_refund > 0 ? fmt.k(S.high.hybrid_refund) : "–"]
+], [1, 2, 3]);
+$("#prResult").innerHTML = `Base case: ${fmt.usd2(S.base.savings_pmpm_y1)} PMPM in year 1 (${fmt.pct(S.base.pct_of_spend)} of lab spend). Recommend the hybrid: the plan clears 2.0x in base and high cases, and in the low case the refund caps our downside at ${fmt.pct(0.25, 0)} of fees.`;
+
+$("#semChecks").innerHTML = DATA.semantic_checks.map(l => {
+  const ok = l.startsWith("[PASS]"); const t = l.replace(/^\[(PASS|FAIL)\]\s*/, "").replace(/^[a-z0-9_]+: /, "");
+  return `<li>${pill(ok ? "good" : "critical", ok ? "Pass" : "Fail")} ${t}</li>`; }).join("");
+
+const redrawAll = () => { renderDash(); drawPolTot(); };
+redrawAll();
+try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", redrawAll); } catch (e) {}
+new MutationObserver(redrawAll).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+</script>
+</body>
+</html>
