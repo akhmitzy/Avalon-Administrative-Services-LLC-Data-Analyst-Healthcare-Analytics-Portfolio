@@ -1,0 +1,36 @@
+name: lab-analytics-pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "30 11 * * 1-5"   # 06:30 ET weekdays
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Generate synthetic data
+        run: python src/generate_data.py
+      - name: Run ELT pipeline with quality gate
+        run: python src/pipeline/run_pipeline.py
+      - name: Run analyses
+        run: make analysis PY=python
+      - name: Unit + data tests
+        run: pytest -q
+      - name: Build portfolio page
+        run: make site PY=python
+      - name: Publish reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: outputs/
