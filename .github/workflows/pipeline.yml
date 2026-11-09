@@ -4,8 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
-  schedule:
-    - cron: "30 11 * * 1-5"   # 06:30 ET weekdays
+  #schedule:
+  #  - cron: "30 11 * * 1-5"   # 06:30 ET weekdays
   workflow_dispatch:
 
 jobs:
